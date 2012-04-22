@@ -18,8 +18,10 @@ private:
     bool on_motion_notify_event(GdkEventMotion* event) override;
 
     shape shape_;
+    bool higlighting_;
+    size_t higlighted_point_;
     bool dragging_;
-    size_t selection_;
+    size_t dragged_point_;
 };
 
 } // namespace linjal
