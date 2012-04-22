@@ -4,6 +4,7 @@
 #include <gtkmm/uimanager.h>
 #include <gtkmm/box.h>
 #include <gtkmm/window.h>
+#include "drawing_area.hpp"
 
 namespace linjal {
 
@@ -19,6 +20,7 @@ private:
     Glib::RefPtr<Gtk::UIManager> ui_manager_;
     Glib::RefPtr<Gtk::ActionGroup> action_group_;
     Gtk::VBox vbox_;
+    drawing_area drawing_area_;
 };
 
 } // namespace linjal

@@ -31,6 +31,7 @@ main_window::main_window() :
 
     add(vbox_);
     create_actions();
+    vbox_.pack_start(drawing_area_);
     show_all_children();
 }
 
