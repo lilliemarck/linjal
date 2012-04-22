@@ -10,6 +10,7 @@ add_executable(linjal
     drawing_area.cpp
     main.cpp
     main_window.cpp
+    math.cpp
     shape.cpp)
 
 target_link_libraries(linjal ${GTKMM_LIBRARIES})

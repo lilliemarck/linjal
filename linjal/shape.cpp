@@ -1,18 +1,11 @@
 #include "shape.hpp"
 #include <limits>
+#include "math.hpp"
 
 namespace linjal {
 
 namespace
 {
-    /**
-     * Return the distance between two points.
-     */
-    float distance(cml::vector2f const& lhs, cml::vector2f const& rhs)
-    {
-        return length(rhs - lhs);
-    }
-
     /**
      * Return the nearest point on the line segment.
      */
@@ -79,16 +72,35 @@ namespace
     }
 }
 
-void insert_point(shape& shape, cml::vector2f const& point)
+shape::iterator insert_point(shape& shape, cml::vector2f const& point)
 {
     if (shape.size() < 3)
     {
         shape.push_back(point);
+        return --shape.end();
     }
     else
     {
-        shape.insert(insertion_iterator(shape, point), point);
+        return shape.insert(insertion_iterator(shape, point), point);
     }
+}
+
+shape::iterator nearest_point(shape& shape, cml::vector2f const& point)
+{
+    shape::iterator neaest_iterator = shape.end();
+    float nearest_distance = std::numeric_limits<float>::max();
+
+    for (auto iter = begin(shape); iter != end(shape); ++iter)
+    {
+        auto temp = distance(point, *iter);
+        if (temp < nearest_distance)
+        {
+            nearest_distance = temp;
+            neaest_iterator = iter;
+        }
+    }
+
+    return neaest_iterator;
 }
 
 } // namespace linjal

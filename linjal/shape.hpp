@@ -8,9 +8,12 @@ namespace linjal {
 typedef std::vector<cml::vector2f> shape;
 
 /**
- * Insert the point at the best place in the shape.
+ * Insert the point at the best place in the shape. Return an iterator to
+ * the new element.
  */
-void insert_point(shape& shape, cml::vector2f const& point);
+shape::iterator insert_point(shape& shape, cml::vector2f const& point);
+
+shape::iterator nearest_point(shape& shape, cml::vector2f const& point);
 
 } // namespace linjal
 
