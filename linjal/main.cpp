@@ -1,13 +1,10 @@
 #include <gtkmm/main.h>
-#include <gtkmm/window.h>
+#include "main_window.hpp"
 
 int main(int argc, char** argv)
 {
     Gtk::Main main(argc, argv);
-    Gtk::Window window;
-    window.set_title("Linjal");
-    window.set_default_size(640, 400);
-    window.set_position(Gtk::WIN_POS_CENTER);
+    linjal::main_window window;
     main.run(window);
     return 0;
 }
