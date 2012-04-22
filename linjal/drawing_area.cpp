@@ -3,8 +3,19 @@
 
 namespace linjal {
 
+namespace
+{
+    void cirlce(Cairo::RefPtr<Cairo::Context> const& cairo,
+                cml::vector2f const& center,
+                float radius)
+    {
+        cairo->arc(center[0], center[1], radius, 0.0, cml::constantsd::two_pi());
+    }
+} // namespace
+
 drawing_area::drawing_area() :
     higlighting_(false),
+    has_selection_(false),
     dragging_(false)
 {
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
@@ -24,6 +35,13 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
     cairo->close_path();
     cairo->set_line_width(1.0);
     cairo->stroke();
+
+    if (has_selection_)
+    {
+        cirlce(cairo, shape_[selected_point_], 2.0f);
+        cairo->fill();
+    }
+
     return true;
 }
 
@@ -31,13 +49,14 @@ bool drawing_area::on_button_press_event(GdkEventButton* event)
 {
     if (higlighting_)
     {
-        dragged_point_ = higlighted_point_;
+        has_selection_ = true;
+        selected_point_ = higlighted_point_;
     }
     else
     {
         cml::vector2f point = {float(event->x), float(event->y)};
-        dragged_point_ = std::distance(shape_.begin(), insert_point(shape_, point));
-        higlighted_point_ = dragged_point_;
+        selected_point_ = std::distance(shape_.begin(), insert_point(shape_, point));
+        higlighted_point_ = selected_point_;
         get_window()->set_cursor(Gdk::Cursor::create(Gdk::HAND2));
     }
 
@@ -56,7 +75,7 @@ bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
 {
     if (dragging_)
     {
-        shape_[dragged_point_].set(event->x, event->y);
+        shape_[selected_point_].set(event->x, event->y);
     }
     else
     {

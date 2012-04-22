@@ -20,8 +20,9 @@ private:
     shape shape_;
     bool higlighting_;
     size_t higlighted_point_;
+    bool has_selection_;
+    size_t selected_point_;
     bool dragging_;
-    size_t dragged_point_;
 };
 
 } // namespace linjal
