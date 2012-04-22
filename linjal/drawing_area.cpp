@@ -27,7 +27,7 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 
 bool drawing_area::on_button_press_event(GdkEventButton* event)
 {
-    shape_.emplace_back<>(event->x, event->y);
+    insert_point(shape_, {float(event->x), float(event->y)});
     queue_draw();
     return true;
 }

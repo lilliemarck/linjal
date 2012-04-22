@@ -9,6 +9,7 @@ include_directories(${CML_INCLUDE_DIR})
 add_executable(linjal
     drawing_area.cpp
     main.cpp
-    main_window.cpp)
+    main_window.cpp
+    shape.cpp)
 
 target_link_libraries(linjal ${GTKMM_LIBRARIES})
