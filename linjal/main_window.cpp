@@ -14,6 +14,9 @@ namespace
         "    <menu action='file_menu'>"
         "      <menuitem action='quit'/>"
         "    </menu>"
+        "    <menu action='edit_menu'>"
+        "      <menuitem action='delete'/>"
+        "    </menu>"
         "    <menu action='help_menu'>"
         "      <menuitem action='about'/>"
         "    </menu>"
@@ -40,6 +43,11 @@ void main_window::create_actions()
     action_group_->add(Gtk::Action::create("file_menu", "_File"));
     action_group_->add(Gtk::Action::create("quit", Gtk::Stock::QUIT),
         sigc::ptr_fun(Gtk::Main::quit));
+
+    action_group_->add(Gtk::Action::create("edit_menu", "_Edit"));
+    action_group_->add(Gtk::Action::create("delete", Gtk::Stock::DELETE),
+        Gtk::AccelKey("Delete"),
+        sigc::mem_fun(drawing_area_, &drawing_area::delete_selection));
 
     action_group_->add(Gtk::Action::create("help_menu", "_Help"));
     action_group_->add(Gtk::Action::create("about", Gtk::Stock::ABOUT),

@@ -10,6 +10,7 @@ class drawing_area : public Gtk::DrawingArea
 {
 public:
     drawing_area();
+    void delete_selection();
 
 private:
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo) override;

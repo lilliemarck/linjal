@@ -21,6 +21,16 @@ drawing_area::drawing_area() :
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
+void drawing_area::delete_selection()
+{
+    if (has_selection_)
+    {
+        shape_.erase(shape_.begin() + selected_point_);
+        has_selection_ = false;
+        dragging_ = false;
+    }
+}
+
 bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
     cairo->set_source_rgb(1.0, 1.0, 1.0);
