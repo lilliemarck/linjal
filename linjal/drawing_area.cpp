@@ -58,7 +58,7 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
     cairo->set_source_rgb(1.0, 1.0, 1.0);
     cairo->paint();
-    cairo->set_source_rgb(0.0, 0.0, 0.0);
+    cairo->set_source_rgb(0.3, 0.4, 0.7);
 
     for (auto const& point : shape_)
     {
@@ -66,8 +66,8 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
     }
 
     cairo->close_path();
-    cairo->set_line_width(1.0);
-    cairo->stroke();
+    cairo->fill();
+    cairo->set_source_rgb(0.0, 0.0, 0.0);
 
     for (size_t index : selection_)
     {
