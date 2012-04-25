@@ -2,6 +2,7 @@
 #define LINJAL_DRAWING_AREA_HPP
 
 #include <gtkmm/drawingarea.h>
+#include <set>
 #include "shape.hpp"
 
 namespace linjal {
@@ -21,8 +22,8 @@ private:
     shape shape_;
     bool higlighting_;
     size_t higlighted_point_;
-    bool has_selection_;
-    size_t selected_point_;
+    std::set<size_t> selection_;
+    cml::vector2d drag_origin_;
     bool dragging_;
 };
 
