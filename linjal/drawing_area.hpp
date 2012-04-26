@@ -23,7 +23,7 @@ private:
     bool higlighting_;
     size_t higlighted_point_;
     std::set<size_t> selection_;
-    cml::vector2d drag_origin_;
+    cml::vector2f drag_origin_;
     bool dragging_;
 };
 
