@@ -55,13 +55,28 @@ void pen_tool::on_delete()
 
 void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
-    cairo->set_source_rgb(0.0, 0.0, 0.0);
-    for (size_t index : selection_)
+    if (!drawing_area_->shape_)
     {
-        node const& node = (*drawing_area_->shape_)[index];
-        cairo_cirlce(cairo, node.position, 2.0f);
+        return;
+    }
+
+    shape const& shape = *drawing_area_->shape_;
+
+    for (size_t i = 0; i < shape.size(); ++i)
+    {
+        if (selection_.find(i) != end(selection_))
+        {
+            cairo->set_source_rgb(1.0, 0.0, 0.0);
+        }
+        else
+        {
+            cairo->set_source_rgb(0.0, 0.0, 0.0);
+        }
+
+        cairo_cirlce(cairo, shape[i].position, 2.0f);
         cairo->fill();
-        cairo_cirlce(cairo, node.control_point, 1.0f);
+        cairo->set_source_rgb(0.0, 0.0, 0.0);
+        cairo_cirlce(cairo, shape[i].control_point, 1.0f);
         cairo->fill();
     }
 }
