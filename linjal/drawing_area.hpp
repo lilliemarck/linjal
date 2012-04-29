@@ -19,7 +19,8 @@ private:
     bool on_button_release_event(GdkEventButton* event);
     bool on_motion_notify_event(GdkEventMotion* event);
 
-    shape shape_;
+    std::vector<shape> shapes_;
+    shape* shape_;
     bool higlighting_;
     size_t higlighted_point_;
     std::set<size_t> selection_;

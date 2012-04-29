@@ -43,6 +43,9 @@ drawing_area::drawing_area() :
     higlighting_(false),
     dragging_(false)
 {
+    shapes_.emplace_back();
+    shape_ = &shapes_.front();
+
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
@@ -50,7 +53,7 @@ void drawing_area::delete_selection()
 {
     for (auto iter = selection_.rbegin(); iter != selection_.rend(); ++iter)
     {
-        shape_.erase(shape_.begin() + *iter);
+        shape_->erase(shape_->begin() + *iter);
     }
 
     selection_.clear();
@@ -66,9 +69,12 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
     cairo->paint();
     cairo->set_source_rgb(0.3, 0.4, 0.7);
 
-    for (auto const& point : shape_)
+    for (auto const& shape : shapes_)
     {
-        cairo->line_to(point[0], point[1]);
+        for (auto const& point : shape)
+        {
+            cairo->line_to(point[0], point[1]);
+        }
     }
 
     cairo->close_path();
@@ -77,7 +83,7 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 
     for (size_t index : selection_)
     {
-        cirlce(cairo, shape_[index], 2.0f);
+        cirlce(cairo, (*shape_)[index], 2.0f);
         cairo->fill();
     }
 
@@ -100,9 +106,9 @@ bool drawing_area::on_button_press_event(GdkEventButton* event)
             selection_.insert(higlighted_point_);
         }
     }
-    else
+    else if (shape_)
     {
-        higlighted_point_ = iterator_to_index(shape_, insert_point(shape_, snapped));
+        higlighted_point_ = iterator_to_index(*shape_, insert_point(*shape_, snapped));
         selection_.clear();
         selection_.insert(higlighted_point_);
         get_window()->set_cursor(Gdk::Cursor::create(Gdk::HAND2));
@@ -129,18 +135,18 @@ bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
         cml::vector2f move = snapped - drag_origin_;
         for (size_t index : selection_)
         {
-            shape_[index] += move;
+            (*shape_)[index] += move;
         }
         drag_origin_ = snapped;
     }
-    else
+    else if (shape_)
     {
-        shape::iterator iter = nearest_point(shape_, snapped);
+        shape::iterator iter = nearest_point(*shape_, snapped);
 
-        if (iter != shape_.end() && distance(snapped, *iter) < 5.0)
+        if (iter != shape_->end() && distance(snapped, *iter) < 5.0)
         {
             higlighting_ = true;
-            higlighted_point_ = std::distance(shape_.begin(), iter);
+            higlighted_point_ =  std::distance(shape_->begin(), iter);
             get_window()->set_cursor(Gdk::Cursor::create(Gdk::HAND2));
         }
         else
