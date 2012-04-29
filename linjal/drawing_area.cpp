@@ -40,7 +40,7 @@ namespace
 } // namespace
 
 drawing_area::drawing_area() :
-    higlighting_(false),
+    highlighting_(false),
     dragging_(false)
 {
     shapes_.emplace_back();
@@ -57,7 +57,7 @@ void drawing_area::delete_selection()
     }
 
     selection_.clear();
-    higlighting_ = false;
+    highlighting_ = false;
     dragging_ = false;
 
     queue_draw();
@@ -94,23 +94,23 @@ bool drawing_area::on_button_press_event(GdkEventButton* event)
 {
     cml::vector2f snapped = snap_position(5.0f, {float(event->x), float(event->y)});
 
-    if (higlighting_)
+    if (highlighting_)
     {
         if (event->state & Gdk::CONTROL_MASK)
         {
-            toggle_selection(selection_, higlighted_point_);
+            toggle_selection(selection_, highlighted_point_);
         }
-        else if (selection_.find(higlighted_point_) == selection_.end())
+        else if (selection_.find(highlighted_point_) == selection_.end())
         {
             selection_.clear();
-            selection_.insert(higlighted_point_);
+            selection_.insert(highlighted_point_);
         }
     }
     else if (shape_)
     {
-        higlighted_point_ = iterator_to_index(*shape_, insert_point(*shape_, snapped));
+        highlighted_point_ = iterator_to_index(*shape_, insert_point(*shape_, snapped));
         selection_.clear();
-        selection_.insert(higlighted_point_);
+        selection_.insert(highlighted_point_);
         get_window()->set_cursor(Gdk::Cursor::create(Gdk::HAND2));
     }
 
@@ -145,13 +145,13 @@ bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
 
         if (iter != shape_->end() && distance(snapped, *iter) < 5.0)
         {
-            higlighting_ = true;
-            higlighted_point_ =  std::distance(shape_->begin(), iter);
+            highlighting_ = true;
+            highlighted_point_ =  std::distance(shape_->begin(), iter);
             get_window()->set_cursor(Gdk::Cursor::create(Gdk::HAND2));
         }
         else
         {
-            higlighting_ = false;
+            highlighting_ = false;
             get_window()->set_cursor(Gdk::Cursor::create(Gdk::PENCIL));
         }
     }

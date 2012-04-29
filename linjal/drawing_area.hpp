@@ -21,8 +21,8 @@ private:
 
     std::vector<shape> shapes_;
     shape* shape_;
-    bool higlighting_;
-    size_t higlighted_point_;
+    bool highlighting_;
+    size_t highlighted_point_;
     std::set<size_t> selection_;
     cml::vector2f drag_origin_;
     bool dragging_;
