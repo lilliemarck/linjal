@@ -12,7 +12,9 @@ add_executable(linjal
     main_window.cpp
     math.cpp
     pen_tool.cpp
+    select_tool.cpp
     shape.cpp
-    tool.cpp)
+    tool.cpp
+    utils.cpp)
 
 target_link_libraries(linjal ${GTKMM_LIBRARIES})

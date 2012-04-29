@@ -1,5 +1,6 @@
 #include "drawing_area.hpp"
 #include "pen_tool.hpp"
+#include "select_tool.hpp"
 
 namespace linjal {
 
@@ -19,12 +20,37 @@ void drawing_area::use_pen_tool()
 
 void drawing_area::use_select_tool()
 {
+    tool_ = std::unique_ptr<tool>(new select_tool(this));
 }
 
 void drawing_area::delete_selection()
 {
     tool_->on_delete();
     queue_draw();
+}
+
+shape* drawing_area::pick(cml::vector2f const& position)
+{
+    auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 0, 0);
+    auto cairo = Cairo::Context::create(surface);
+    shape* picked_shape = nullptr;
+
+    for (auto& shape : shapes_)
+    {
+        for (auto const& point : shape)
+        {
+            cairo->line_to(point[0], point[1]);
+        }
+
+        if (cairo->in_fill(position[0], position[1]))
+        {
+            picked_shape = &shape;
+        }
+
+        cairo->fill();
+    }
+
+    return picked_shape;
 }
 
 bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)

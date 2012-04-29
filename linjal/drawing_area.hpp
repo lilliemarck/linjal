@@ -15,6 +15,7 @@ public:
     void use_pen_tool();
     void use_select_tool();
     void delete_selection();
+    shape* pick(cml::vector2f const& position);
 
 private:
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);
@@ -27,8 +28,8 @@ private:
     std::unique_ptr<tool> tool_;
 
     friend class pen_tool;
+    friend class select_tool;
 };
-
 
 } // namespace linjal
 

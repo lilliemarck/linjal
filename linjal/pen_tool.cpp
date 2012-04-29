@@ -1,18 +1,12 @@
 #include "pen_tool.hpp"
 #include "drawing_area.hpp"
 #include "math.hpp"
+#include "utils.hpp"
 
 namespace linjal {
 
 namespace
 {
-    void cirlce(Cairo::RefPtr<Cairo::Context> const& cairo,
-                cml::vector2f const& center,
-                float radius)
-    {
-        cairo->arc(center[0], center[1], radius, 0.0, cml::constantsd::two_pi());
-    }
-
     void toggle_selection(std::set<size_t>& selection, size_t index)
     {
         auto iter = selection.find(index);
@@ -64,7 +58,7 @@ void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
     for (size_t index : selection_)
     {
-        cirlce(cairo, (*drawing_area_->shape_)[index], 2.0f);
+        cairo_cirlce(cairo, (*drawing_area_->shape_)[index], 2.0f);
         cairo->fill();
     }
 }
