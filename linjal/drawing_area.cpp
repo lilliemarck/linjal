@@ -11,12 +11,36 @@ namespace
         return Cairo::Context::create(Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 0, 0));
     }
 
+    template <typename Container, typename Iterator>
+    shape::const_iterator wraparound_next(Container const& container, Iterator iterator)
+    {
+        if (++iterator != end(container))
+        {
+            return iterator;
+        }
+        else
+        {
+            return begin(container);
+        }
+    }
+
     void curve(Cairo::RefPtr<Cairo::Context> const& cairo, shape const& shape)
     {
-        for (auto const& node : shape)
+        if (shape.empty())
         {
-            cairo->line_to(node.position[0], node.position[1]);
-            cairo->line_to(node.control_point[0], node.control_point[1]);
+            return;
+        }
+
+        const float k = 0.551784f;
+        cairo->move_to(shape.front().position[0], shape.front().position[1]);
+
+        for (shape::const_iterator iter = begin(shape); iter != end(shape); ++iter)
+        {
+            auto const& node = *iter;
+            auto const& next = *wraparound_next(shape, iter);
+            auto b = lerp(node.position, node.control_point, k);
+            auto c = lerp(next.position, node.control_point, k);
+            cairo->curve_to(b[0], b[1], c[0], c[1], next.position[0], next.position[1]);
         }
     }
 } // namespace
