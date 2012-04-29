@@ -59,7 +59,8 @@ void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
     cairo->set_source_rgb(0.0, 0.0, 0.0);
     for (size_t index : selection_)
     {
-        cairo_cirlce(cairo, (*drawing_area_->shape_)[index], 2.0f);
+        node const& node = (*drawing_area_->shape_)[index];
+        cairo_cirlce(cairo, node.position, 2.0f);
         cairo->fill();
     }
 }
@@ -108,7 +109,7 @@ void pen_tool::on_motion_notify_event(GdkEventMotion const& event)
         cml::vector2f move = snapped - drag_origin_;
         for (size_t index : selection_)
         {
-            shape[index] += move;
+            shape[index].position += move;
         }
         drag_origin_ = snapped;
     }
@@ -117,7 +118,7 @@ void pen_tool::on_motion_notify_event(GdkEventMotion const& event)
         shape& shape = *drawing_area_->shape_;
         shape::iterator iter = nearest_point(shape, snapped);
 
-        if (iter != shape.end() && distance(snapped, *iter) < 5.0)
+        if (iter != shape.end() && distance(snapped, iter->position) < 5.0)
         {
             highlighting_ = true;
             highlighted_point_ =  std::distance(shape.begin(), iter);

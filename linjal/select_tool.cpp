@@ -26,9 +26,9 @@ void select_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
     cairo->set_source_rgb(0.0, 0.0, 0.0);
     if (drawing_area_->shape_)
     {
-        for (auto const& point : *drawing_area_->shape_)
+        for (auto const& node : *drawing_area_->shape_)
         {
-            cairo_cirlce(cairo, point, 2.0f);
+            cairo_cirlce(cairo, node.position, 2.0f);
             cairo->fill();
         }
     }

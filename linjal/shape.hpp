@@ -5,7 +5,13 @@
 
 namespace linjal {
 
-typedef std::vector<cml::vector2f> shape;
+struct node
+{
+    cml::vector2f position;
+    cml::vector2f control_point;
+};
+
+typedef std::vector<node> shape;
 
 /**
  * Insert the point at the best place in the shape. Return an iterator to
