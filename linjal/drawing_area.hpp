@@ -19,6 +19,7 @@ public:
     shape* pick(cml::vector2f const& position);
 
 private:
+    void delete_degenerate_shapes();
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);
     bool on_button_press_event(GdkEventButton* event);
     bool on_button_release_event(GdkEventButton* event);

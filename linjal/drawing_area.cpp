@@ -4,6 +4,15 @@
 
 namespace linjal {
 
+namespace
+{
+    Cairo::RefPtr<Cairo::Context> create_null_cairo_context()
+    {
+        return Cairo::Context::create(Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 0, 0));
+    }
+
+} // namespace
+
 drawing_area::drawing_area()
 {
     new_shape();
@@ -15,16 +24,21 @@ void drawing_area::new_shape()
 {
     shapes_.emplace_back();
     shape_ = &shapes_.back();
-    use_pen_tool(); // Create a new tool so that selections are cleared
+
+    // Create a new tool so that selections are cleared. Don't call
+    // use_pen_tool because it calls delete_degenerate_shapes!
+    tool_ = std::unique_ptr<tool>(new pen_tool(this));
 }
 
 void drawing_area::use_pen_tool()
 {
+    delete_degenerate_shapes();
     tool_ = std::unique_ptr<tool>(new pen_tool(this));
 }
 
 void drawing_area::use_select_tool()
 {
+    delete_degenerate_shapes();
     tool_ = std::unique_ptr<tool>(new select_tool(this));
 }
 
@@ -36,8 +50,7 @@ void drawing_area::delete_selection()
 
 shape* drawing_area::pick(cml::vector2f const& position)
 {
-    auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 0, 0);
-    auto cairo = Cairo::Context::create(surface);
+    auto cairo = create_null_cairo_context();
     shape* picked_shape = nullptr;
 
     for (auto& shape : shapes_)
@@ -56,6 +69,39 @@ shape* drawing_area::pick(cml::vector2f const& position)
     }
 
     return picked_shape;
+}
+
+void drawing_area::delete_degenerate_shapes()
+{
+    auto cairo = create_null_cairo_context();
+
+    for (auto iter = begin(shapes_); iter != end(shapes_);)
+    {
+        auto const& shape = *iter;
+
+        for (auto const& point : shape)
+        {
+            cairo->line_to(point[0], point[1]);
+        }
+
+        double x1, y1, x2, y2;
+        cairo->get_fill_extents(x1, y1, x2, y2);
+        cairo->fill();
+
+        if (x1 == 0.0 && y1 == 0.0 && x2 == 0.0 && y2 == 0.0)
+        {
+            iter = shapes_.erase(iter);
+
+            if (shape_ == &shape)
+            {
+                shape_ = nullptr;
+            }
+        }
+        else
+        {
+            ++iter;
+        }
+    }
 }
 
 bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
