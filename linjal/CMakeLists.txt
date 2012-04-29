@@ -16,6 +16,7 @@ add_executable(linjal
     select_tool.cpp
     shape.cpp
     tool.cpp
-    utils.cpp)
+    utils.cpp
+    view_transform.cpp)
 
 target_link_libraries(linjal ${GTKMM_LIBRARIES})

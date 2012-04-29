@@ -28,22 +28,22 @@ void select_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
     {
         for (auto const& node : *drawing_area_->shape_)
         {
-            cairo_cirlce(cairo, node.position, 2.0f);
+            cairo_cirlce(cairo, drawing_area_->transform_.to_screen(node.position), 2.0f);
             cairo->fill();
         }
     }
 }
 
-void select_tool::on_button_press_event(GdkEventButton const& event)
+void select_tool::on_button_press_event(pointer_event const& event)
 {
-    drawing_area_->shape_ = drawing_area_->pick({float(event.x), float(event.y)});
+    drawing_area_->shape_ = drawing_area_->pick(event.model_position);
 }
 
-void select_tool::on_button_release_event(GdkEventButton const& event)
+void select_tool::on_button_release_event(pointer_event const& event)
 {
 }
 
-void select_tool::on_motion_notify_event(GdkEventMotion const& event)
+void select_tool::on_motion_notify_event(pointer_event const& event)
 {
 }
 

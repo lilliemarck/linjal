@@ -5,6 +5,7 @@
 #include <memory>
 #include "shape.hpp"
 #include "tool.hpp"
+#include "view_transform.hpp"
 
 namespace linjal {
 
@@ -24,9 +25,11 @@ private:
     bool on_button_press_event(GdkEventButton* event);
     bool on_button_release_event(GdkEventButton* event);
     bool on_motion_notify_event(GdkEventMotion* event);
+    bool on_scroll_event(GdkEventScroll* event);
 
     std::vector<shape> shapes_;
     shape* shape_;
+    view_transform transform_;
     std::unique_ptr<tool> tool_;
 
     friend class pen_tool;

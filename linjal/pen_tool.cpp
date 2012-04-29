@@ -60,6 +60,7 @@ void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
         return;
     }
 
+    auto const& transform = drawing_area_->transform_;
     shape const& shape = *drawing_area_->shape_;
 
     for (size_t i = 0; i < shape.size(); ++i)
@@ -73,22 +74,22 @@ void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
             cairo->set_source_rgb(0.0, 0.0, 0.0);
         }
 
-        cairo_cirlce(cairo, shape[i].position, 2.0f);
+        cairo_cirlce(cairo, transform.to_screen(shape[i].position), 2.0f);
         cairo->fill();
         cairo->set_source_rgb(0.0, 0.0, 0.0);
-        cairo_cirlce(cairo, shape[i].control_point, 1.0f);
+        cairo_cirlce(cairo, transform.to_screen(shape[i].control_point), 1.0f);
         cairo->fill();
     }
 }
 
-void pen_tool::on_button_press_event(GdkEventButton const& event)
+void pen_tool::on_button_press_event(pointer_event const& event)
 {
     if (!drawing_area_->shape_)
     {
         return;
     }
 
-    cml::vector2f snapped = snap_position(5.0f, {float(event.x), float(event.y)});
+    cml::vector2f snapped = snap_position(0.5f, event.model_position);
 
     switch (highlight_.type())
     {
@@ -129,12 +130,12 @@ void pen_tool::on_button_press_event(GdkEventButton const& event)
     }
 }
 
-void pen_tool::on_button_release_event(GdkEventButton const& event)
+void pen_tool::on_button_release_event(pointer_event const& event)
 {
     state_ = state::idle;
 }
 
-void pen_tool::on_motion_notify_event(GdkEventMotion const& event)
+void pen_tool::on_motion_notify_event(pointer_event const& event)
 {
     if (!drawing_area_->shape_)
     {
@@ -143,7 +144,7 @@ void pen_tool::on_motion_notify_event(GdkEventMotion const& event)
     }
 
     shape& shape = *drawing_area_->shape_;
-    cml::vector2f snapped = snap_position(5.0f, {float(event.x), float(event.y)});
+    cml::vector2f snapped = snap_position(0.5f, event.model_position);
 
     switch (state_)
     {
@@ -152,6 +153,7 @@ void pen_tool::on_motion_notify_event(GdkEventMotion const& event)
             // Don't think it hurts to use the snapped position here
             float distance;
             highlight_ = nearest_point(shape, snapped, distance);
+            distance *= drawing_area_->transform_.zoom();
 
             if (highlight_.type() == point_ref::position && distance < 5.0)
             {

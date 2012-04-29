@@ -1,6 +1,7 @@
 #include "drawing_area.hpp"
 #include "pen_tool.hpp"
 #include "select_tool.hpp"
+#include "utils.hpp"
 
 namespace linjal {
 
@@ -24,7 +25,7 @@ namespace
         }
     }
 
-    void curve(Cairo::RefPtr<Cairo::Context> const& cairo, shape const& shape)
+    void curve(Cairo::RefPtr<Cairo::Context> const& cairo, shape const& shape, view_transform const& transform)
     {
         if (shape.empty())
         {
@@ -32,7 +33,7 @@ namespace
         }
 
         const float k = 0.551784f;
-        cairo->move_to(shape.front().position[0], shape.front().position[1]);
+        cairo_move_to(cairo, transform.to_screen(shape.front().position));
 
         for (shape::const_iterator iter = begin(shape); iter != end(shape); ++iter)
         {
@@ -40,7 +41,10 @@ namespace
             auto const& next = *wraparound_next(shape, iter);
             auto b = lerp(node.position, node.control_point, k);
             auto c = lerp(next.position, node.control_point, k);
-            cairo->curve_to(b[0], b[1], c[0], c[1], next.position[0], next.position[1]);
+            cairo_curve_to(cairo,
+                           transform.to_screen(b),
+                           transform.to_screen(c),
+                           transform.to_screen(next.position));
         }
     }
 } // namespace
@@ -82,11 +86,12 @@ void drawing_area::delete_selection()
 shape* drawing_area::pick(cml::vector2f const& position)
 {
     auto cairo = create_null_cairo_context();
+    view_transform no_transform;
     shape* picked_shape = nullptr;
 
     for (auto& shape : shapes_)
     {
-        curve(cairo, shape);
+        curve(cairo, shape, no_transform);
 
         if (cairo->in_fill(position[0], position[1]))
         {
@@ -102,12 +107,13 @@ shape* drawing_area::pick(cml::vector2f const& position)
 void drawing_area::delete_degenerate_shapes()
 {
     auto cairo = create_null_cairo_context();
+    view_transform no_transform;
 
     for (auto iter = begin(shapes_); iter != end(shapes_);)
     {
         auto const& shape = *iter;
 
-        curve(cairo, shape);
+        curve(cairo, shape, no_transform);
 
         double x1, y1, x2, y2;
         cairo->get_fill_extents(x1, y1, x2, y2);
@@ -137,7 +143,7 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 
     for (auto const& shape : shapes_)
     {
-        curve(cairo, shape);
+        curve(cairo, shape, transform_);
         cairo->fill();
     }
 
@@ -147,21 +153,55 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 
 bool drawing_area::on_button_press_event(GdkEventButton* event)
 {
-    tool_->on_button_press_event(*event);
+    pointer_event pointer_event =
+    {
+        transform_.to_model({float(event->x), float(event->y)}),
+        event->state
+    };
+
+    tool_->on_button_press_event(pointer_event);
     queue_draw();
     return true;
 }
 
 bool drawing_area::on_button_release_event(GdkEventButton* event)
 {
-    tool_->on_button_release_event(*event);
+    pointer_event pointer_event =
+    {
+        transform_.to_model({float(event->x), float(event->y)}),
+        event->state
+    };
+
+    tool_->on_button_release_event(pointer_event);
     queue_draw();
     return true;
 }
 
 bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
 {
-    tool_->on_motion_notify_event(*event);
+    pointer_event pointer_event =
+    {
+        transform_.to_model({float(event->x), float(event->y)}),
+        event->state
+    };
+
+    tool_->on_motion_notify_event(pointer_event);
+    queue_draw();
+    return true;
+}
+
+bool drawing_area::on_scroll_event(GdkEventScroll* event)
+{
+    if (event->direction == GDK_SCROLL_UP)
+    {
+        transform_.zoom_in();
+    }
+    // Zoom out
+    else if (event->direction == GDK_SCROLL_DOWN)
+    {
+        transform_.zoom_out();
+    }
+
     queue_draw();
     return true;
 }
