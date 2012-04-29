@@ -2,8 +2,9 @@
 #define LINJAL_DRAWING_AREA_HPP
 
 #include <gtkmm/drawingarea.h>
-#include <set>
+#include <memory>
 #include "shape.hpp"
+#include "tool.hpp"
 
 namespace linjal {
 
@@ -23,12 +24,11 @@ private:
 
     std::vector<shape> shapes_;
     shape* shape_;
-    bool highlighting_;
-    size_t highlighted_point_;
-    std::set<size_t> selection_;
-    cml::vector2f drag_origin_;
-    bool dragging_;
+    std::unique_ptr<tool> tool_;
+
+    friend class pen_tool;
 };
+
 
 } // namespace linjal
 
