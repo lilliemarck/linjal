@@ -3,6 +3,7 @@
 
 #include <gtkmm/uimanager.h>
 #include <gtkmm/box.h>
+#include <gtkmm/radioaction.h>
 #include <gtkmm/window.h>
 #include "drawing_area.hpp"
 
@@ -19,6 +20,8 @@ private:
 
     Glib::RefPtr<Gtk::UIManager> ui_manager_;
     Glib::RefPtr<Gtk::ActionGroup> action_group_;
+    Glib::RefPtr<Gtk::RadioAction> pen_tool_action_;
+    Glib::RefPtr<Gtk::RadioAction> select_tool_action_;
     Gtk::VBox vbox_;
     drawing_area drawing_area_;
 };

@@ -49,6 +49,14 @@ drawing_area::drawing_area() :
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
+void drawing_area::use_pen_tool()
+{
+}
+
+void drawing_area::use_select_tool()
+{
+}
+
 void drawing_area::delete_selection()
 {
     for (auto iter = selection_.rbegin(); iter != selection_.rend(); ++iter)
