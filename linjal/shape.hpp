@@ -2,6 +2,7 @@
 #define LINJAL_SHAPE_HPP
 
 #include <cml/cml.h>
+#include "point_ref.hpp"
 
 namespace linjal {
 
@@ -19,7 +20,7 @@ typedef std::vector<node> shape;
  */
 shape::iterator insert_point(shape& shape, cml::vector2f const& point);
 
-shape::iterator nearest_point(shape& shape, cml::vector2f const& point);
+point_ref nearest_point(shape& shape, cml::vector2f const& point, float& distance);
 
 } // namespace linjal
 

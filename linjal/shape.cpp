@@ -85,22 +85,31 @@ shape::iterator insert_point(shape& shape, cml::vector2f const& point)
     }
 }
 
-shape::iterator nearest_point(shape& shape, cml::vector2f const& point)
+point_ref nearest_point(shape& shape, cml::vector2f const& point, float& distance)
 {
-    shape::iterator neaest_iterator = shape.end();
+    point_ref nearest_ref;
     float nearest_distance = std::numeric_limits<float>::max();
 
     for (auto iter = begin(shape); iter != end(shape); ++iter)
     {
-        auto temp = distance(point, iter->position);
+        auto temp = linjal::distance(point, iter->control_point);
         if (temp < nearest_distance)
         {
             nearest_distance = temp;
-            neaest_iterator = iter;
+            nearest_ref.set_control_point(std::distance(begin(shape), iter));
+            distance = temp;
+        }
+
+        temp = linjal::distance(point, iter->position);
+        if (temp < nearest_distance)
+        {
+            nearest_distance = temp;
+            nearest_ref.set_position(std::distance(begin(shape), iter));
+            distance = temp;
         }
     }
 
-    return neaest_iterator;
+    return nearest_ref;
 }
 
 } // namespace linjal

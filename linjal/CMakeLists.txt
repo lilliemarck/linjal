@@ -12,6 +12,7 @@ add_executable(linjal
     main_window.cpp
     math.cpp
     pen_tool.cpp
+    point_ref.cpp
     select_tool.cpp
     shape.cpp
     tool.cpp

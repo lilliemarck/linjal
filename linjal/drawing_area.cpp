@@ -16,6 +16,7 @@ namespace
         for (auto const& node : shape)
         {
             cairo->line_to(node.position[0], node.position[1]);
+            cairo->line_to(node.control_point[0], node.control_point[1]);
         }
     }
 } // namespace

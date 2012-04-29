@@ -3,6 +3,7 @@
 
 #include <cml/cml.h>
 #include <set>
+#include "shape.hpp"
 #include "tool.hpp"
 
 namespace linjal {
@@ -18,11 +19,17 @@ public:
     virtual void on_motion_notify_event(GdkEventMotion const& event);
 
 private:
-    bool highlighting_;
-    size_t highlighted_point_;
+    enum class state
+    {
+        idle,
+        drag_control_point,
+        drag_selection
+    };
+
+    point_ref highlight_;
     std::set<size_t> selection_;
+    state state_;
     cml::vector2f drag_origin_;
-    bool dragging_;
 };
 
 } // namespace linjal
