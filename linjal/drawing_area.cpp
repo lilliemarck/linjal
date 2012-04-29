@@ -13,9 +13,8 @@ namespace
 
 } // namespace
 
-drawing_area::drawing_area()
+drawing_area::drawing_area() : shape_(nullptr)
 {
-    new_shape();
     use_pen_tool();
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
