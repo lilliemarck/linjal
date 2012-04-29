@@ -12,6 +12,7 @@ class drawing_area : public Gtk::DrawingArea
 {
 public:
     drawing_area();
+    void new_shape();
     void use_pen_tool();
     void use_select_tool();
     void delete_selection();

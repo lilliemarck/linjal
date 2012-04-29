@@ -23,6 +23,7 @@ void select_tool::on_delete()
 
 void select_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
+    cairo->set_source_rgb(0.0, 0.0, 0.0);
     if (drawing_area_->shape_)
     {
         for (auto const& point : *drawing_area_->shape_)

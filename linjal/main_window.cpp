@@ -23,6 +23,7 @@ namespace
         "    </menu>"
         "  </menubar>"
         "  <toolbar name='toolbar'>"
+        "    <toolitem action='new_shape'/>"
         "    <toolitem action='pen'/>"
         "    <toolitem action='select'/>"
         "  </toolbar>"
@@ -57,6 +58,9 @@ void main_window::create_actions()
     action_group_->add(Gtk::Action::create("help_menu", "_Help"));
     action_group_->add(Gtk::Action::create("about", Gtk::Stock::ABOUT),
           sigc::mem_fun(this, &main_window::show_about_dialog));
+
+    action_group_->add(Gtk::Action::create("new_shape", "New Shape"),
+                       sigc::mem_fun(drawing_area_, &drawing_area::new_shape));
 
     Gtk::RadioAction::Group tool_group;
     pen_tool_action_ = Gtk::RadioAction::create(tool_group, "pen", "Pen");

@@ -6,11 +6,16 @@ namespace linjal {
 
 drawing_area::drawing_area()
 {
-    shapes_.emplace_back();
-    shape_ = &shapes_.front();
-
+    new_shape();
     use_pen_tool();
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
+}
+
+void drawing_area::new_shape()
+{
+    shapes_.emplace_back();
+    shape_ = &shapes_.back();
+    use_pen_tool(); // Create a new tool so that selections are cleared
 }
 
 void drawing_area::use_pen_tool()
@@ -65,14 +70,12 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
         {
             cairo->line_to(point[0], point[1]);
         }
+
+        cairo->close_path();
+        cairo->fill();
     }
 
-    cairo->close_path();
-    cairo->fill();
-    cairo->set_source_rgb(0.0, 0.0, 0.0);
-
     tool_->on_draw(cairo);
-
     return true;
 }
 

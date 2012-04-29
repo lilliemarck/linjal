@@ -56,6 +56,7 @@ void pen_tool::on_delete()
 
 void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
+    cairo->set_source_rgb(0.0, 0.0, 0.0);
     for (size_t index : selection_)
     {
         cairo_cirlce(cairo, (*drawing_area_->shape_)[index], 2.0f);
