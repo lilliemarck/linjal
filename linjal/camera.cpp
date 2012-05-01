@@ -21,14 +21,14 @@ cml::vector2f camera::to_screen_space(cml::vector2f const & model) const
     return (model - position_) * zoom_;
 }
 
-cml::vector2f camera::get_position()
+cml::vector2i camera::get_position()
 {
     return position_;
 }
 
-void camera::set_position(cml::vector2f const& position)
+void camera::set_position(cml::vector2i const& position)
 {
-    position_.set(round(position[0]), round(position[1]));
+    position_ = position;
 }
 
 void camera::set_zoom(int zoom, cml::vector2f const& cursor)
