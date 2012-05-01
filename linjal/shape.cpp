@@ -1,6 +1,8 @@
 #include "shape.hpp"
 #include <limits>
+#include "camera.hpp"
 #include "math.hpp"
+#include "utils.hpp"
 
 namespace linjal {
 
@@ -70,6 +72,19 @@ namespace
         }
         return iterator;
     }
+
+    template <typename Container, typename Iterator>
+    shape::const_iterator wraparound_next(Container const& container, Iterator iterator)
+    {
+        if (++iterator != end(container))
+        {
+            return iterator;
+        }
+        else
+        {
+            return begin(container);
+        }
+    }
 }
 
 shape::iterator insert_point(shape& shape, cml::vector2f const& point)
@@ -82,6 +97,14 @@ shape::iterator insert_point(shape& shape, cml::vector2f const& point)
     else
     {
         return shape.insert(insertion_iterator(shape, point), {point, point});
+    }
+}
+
+void erase_points(shape& shape, std::set<size_t> const& indices)
+{
+    for (auto iter = indices.rbegin(); iter != indices.rend(); ++iter)
+    {
+        shape.erase(shape.begin() + *iter);
     }
 }
 
@@ -110,6 +133,29 @@ point_ref nearest_point(shape& shape, cml::vector2f const& point, float& distanc
     }
 
     return nearest_ref;
+}
+
+void shape_curve(shape const& shape, Cairo::RefPtr<Cairo::Context> const& cairo, camera const& camera)
+{
+    if (shape.empty())
+    {
+        return;
+    }
+
+    const float k = 0.551784f;
+    cairo_move_to(cairo, camera.to_screen_space(shape.front().position));
+
+    for (shape::const_iterator iter = begin(shape); iter != end(shape); ++iter)
+    {
+        auto const& node = *iter;
+        auto const& next = *wraparound_next(shape, iter);
+        auto b = lerp(node.position, node.control_point, k);
+        auto c = lerp(next.position, node.control_point, k);
+        cairo_curve_to(cairo,
+                       camera.to_screen_space(b),
+                       camera.to_screen_space(c),
+                       camera.to_screen_space(next.position));
+    }
 }
 
 } // namespace linjal

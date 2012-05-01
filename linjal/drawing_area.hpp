@@ -4,6 +4,7 @@
 #include <gtkmm/drawingarea.h>
 #include <memory>
 #include "camera.hpp"
+#include "model.hpp"
 #include "shape.hpp"
 #include "tool.hpp"
 
@@ -17,23 +18,23 @@ public:
     void use_pen_tool();
     void use_select_tool();
     void delete_selection();
-    shape* pick(cml::vector2f const& position);
 
 private:
-    void delete_degenerate_shapes();
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);
     bool on_button_press_event(GdkEventButton* event);
     bool on_button_release_event(GdkEventButton* event);
     bool on_motion_notify_event(GdkEventMotion* event);
     bool on_scroll_event(GdkEventScroll* event);
+    void on_shape_deleted(shape* shape);
 
-    std::vector<shape> shapes_;
+    model model_;
     shape* shape_;
     camera camera_;
     std::unique_ptr<tool> tool_;
     bool panning_;
     cml::vector2f grab_position_;
 
+    friend class tool;
     friend class pen_tool;
     friend class select_tool;
 };

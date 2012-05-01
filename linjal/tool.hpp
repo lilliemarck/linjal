@@ -7,6 +7,7 @@
 namespace linjal {
 
 class drawing_area;
+class model;
 
 struct pointer_event
 {
@@ -28,6 +29,7 @@ public:
 
 protected:
     drawing_area* drawing_area_;
+    model& model_;
 };
 
 } // namespace linjal

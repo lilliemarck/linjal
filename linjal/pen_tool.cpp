@@ -43,9 +43,9 @@ pen_tool::pen_tool(linjal::drawing_area* drawing_area) :
 
 void pen_tool::on_delete()
 {
-    for (auto iter = selection_.rbegin(); iter != selection_.rend(); ++iter)
+    if (shape* shape = drawing_area_->shape_)
     {
-        drawing_area_->shape_->erase(drawing_area_->shape_->begin() + *iter);
+        erase_points(*shape, selection_);
     }
 
     selection_.clear();
