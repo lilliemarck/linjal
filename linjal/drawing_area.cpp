@@ -25,7 +25,7 @@ namespace
         }
     }
 
-    void curve(Cairo::RefPtr<Cairo::Context> const& cairo, shape const& shape, view_transform const& transform)
+    void curve(Cairo::RefPtr<Cairo::Context> const& cairo, shape const& shape, camera const& transform)
     {
         if (shape.empty())
         {
@@ -33,7 +33,7 @@ namespace
         }
 
         const float k = 0.551784f;
-        cairo_move_to(cairo, transform.to_screen(shape.front().position));
+        cairo_move_to(cairo, transform.to_screen_space(shape.front().position));
 
         for (shape::const_iterator iter = begin(shape); iter != end(shape); ++iter)
         {
@@ -42,9 +42,9 @@ namespace
             auto b = lerp(node.position, node.control_point, k);
             auto c = lerp(next.position, node.control_point, k);
             cairo_curve_to(cairo,
-                           transform.to_screen(b),
-                           transform.to_screen(c),
-                           transform.to_screen(next.position));
+                           transform.to_screen_space(b),
+                           transform.to_screen_space(c),
+                           transform.to_screen_space(next.position));
         }
     }
 } // namespace
@@ -86,7 +86,7 @@ void drawing_area::delete_selection()
 shape* drawing_area::pick(cml::vector2f const& position)
 {
     auto cairo = create_null_cairo_context();
-    view_transform no_transform;
+    camera no_transform;
     shape* picked_shape = nullptr;
 
     for (auto& shape : shapes_)
@@ -107,7 +107,7 @@ shape* drawing_area::pick(cml::vector2f const& position)
 void drawing_area::delete_degenerate_shapes()
 {
     auto cairo = create_null_cairo_context();
-    view_transform no_transform;
+    camera no_transform;
 
     for (auto iter = begin(shapes_); iter != end(shapes_);)
     {
@@ -143,7 +143,7 @@ bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 
     for (auto const& shape : shapes_)
     {
-        curve(cairo, shape, transform_);
+        curve(cairo, shape, camera_);
         cairo->fill();
     }
 
@@ -155,7 +155,7 @@ bool drawing_area::on_button_press_event(GdkEventButton* event)
 {
     pointer_event pointer_event =
     {
-        transform_.to_model({float(event->x), float(event->y)}),
+        camera_.to_model_space({float(event->x), float(event->y)}),
         event->state
     };
 
@@ -183,7 +183,7 @@ bool drawing_area::on_button_release_event(GdkEventButton* event)
 
     pointer_event pointer_event =
     {
-        transform_.to_model({float(event->x), float(event->y)}),
+        camera_.to_model_space({float(event->x), float(event->y)}),
         event->state
     };
 
@@ -194,16 +194,18 @@ bool drawing_area::on_button_release_event(GdkEventButton* event)
 
 bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
 {
+    cml::vector2f event_position = {float(event->x), float(event->y)};
+
     if (panning_)
     {
-        auto offset = transform_.to_model_scale({float(event->x), float(event->y)});
-        transform_.set_focus(grab_position_ - offset);
+        auto offset = camera_.to_model_scale(event_position);
+        camera_.set_position(grab_position_ - offset);
     }
     else
     {
         pointer_event pointer_event =
         {
-            transform_.to_model({float(event->x), float(event->y)}),
+            camera_.to_model_space(event_position),
             event->state
         };
 
@@ -220,14 +222,14 @@ bool drawing_area::on_scroll_event(GdkEventScroll* event)
 
     if (event->direction == GDK_SCROLL_UP)
     {
-        transform_.set_zoom(transform_.zoom() + 1, screen_position);
+        camera_.set_zoom(camera_.get_zoom() + 1, screen_position);
     }
     else if (event->direction == GDK_SCROLL_DOWN)
     {
-        int zoom = transform_.zoom();
+        int zoom = camera_.get_zoom();
         if (zoom > 1)
         {
-            transform_.set_zoom(zoom - 1, screen_position);
+            camera_.set_zoom(zoom - 1, screen_position);
         }
     }
 

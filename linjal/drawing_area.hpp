@@ -3,9 +3,9 @@
 
 #include <gtkmm/drawingarea.h>
 #include <memory>
+#include "camera.hpp"
 #include "shape.hpp"
 #include "tool.hpp"
-#include "view_transform.hpp"
 
 namespace linjal {
 
@@ -29,7 +29,7 @@ private:
 
     std::vector<shape> shapes_;
     shape* shape_;
-    view_transform transform_;
+    camera camera_;
     std::unique_ptr<tool> tool_;
     bool panning_;
     cml::vector2f grab_position_;

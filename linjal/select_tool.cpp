@@ -28,7 +28,7 @@ void select_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
     {
         for (auto const& node : *drawing_area_->shape_)
         {
-            cairo_cirlce(cairo, drawing_area_->transform_.to_screen(node.position), 2.0f);
+            cairo_cirlce(cairo, drawing_area_->camera_.to_screen_space(node.position), 2.0f);
             cairo->fill();
         }
     }

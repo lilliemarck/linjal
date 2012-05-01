@@ -7,6 +7,7 @@ include_directories(${GTKMM_INCLUDE_DIRS})
 include_directories(${CML_INCLUDE_DIR})
 
 add_executable(linjal
+    camera.cpp
     drawing_area.cpp
     main.cpp
     main_window.cpp
@@ -16,7 +17,6 @@ add_executable(linjal
     select_tool.cpp
     shape.cpp
     tool.cpp
-    utils.cpp
-    view_transform.cpp)
+    utils.cpp)
 
 target_link_libraries(linjal ${GTKMM_LIBRARIES})

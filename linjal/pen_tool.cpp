@@ -60,7 +60,7 @@ void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
         return;
     }
 
-    auto const& transform = drawing_area_->transform_;
+    auto const& camera = drawing_area_->camera_;
     shape const& shape = *drawing_area_->shape_;
 
     for (size_t i = 0; i < shape.size(); ++i)
@@ -74,10 +74,10 @@ void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
             cairo->set_source_rgb(0.0, 0.0, 0.0);
         }
 
-        cairo_cirlce(cairo, transform.to_screen(shape[i].position), 2.0f);
+        cairo_cirlce(cairo, camera.to_screen_space(shape[i].position), 2.0f);
         cairo->fill();
         cairo->set_source_rgb(0.0, 0.0, 0.0);
-        cairo_cirlce(cairo, transform.to_screen(shape[i].control_point), 1.0f);
+        cairo_cirlce(cairo, camera.to_screen_space(shape[i].control_point), 1.0f);
         cairo->fill();
     }
 }
@@ -153,7 +153,7 @@ void pen_tool::on_motion_notify_event(pointer_event const& event)
             // Don't think it hurts to use the snapped position here
             float distance;
             highlight_ = nearest_point(shape, snapped, distance);
-            distance *= drawing_area_->transform_.zoom();
+            distance *= drawing_area_->camera_.get_zoom();
 
             if (highlight_.type() == point_ref::position && distance < 5.0)
             {
