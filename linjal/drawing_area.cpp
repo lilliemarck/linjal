@@ -49,7 +49,7 @@ namespace
     }
 } // namespace
 
-drawing_area::drawing_area() : shape_(nullptr)
+drawing_area::drawing_area() : shape_(nullptr), panning_(false)
 {
     use_pen_tool();
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
@@ -159,13 +159,28 @@ bool drawing_area::on_button_press_event(GdkEventButton* event)
         event->state
     };
 
-    tool_->on_button_press_event(pointer_event);
+    if (event->button == 3)
+    {
+        panning_ = true;
+        grab_position_ = pointer_event.model_position;
+    }
+    else
+    {
+        tool_->on_button_press_event(pointer_event);
+    }
+
     queue_draw();
     return true;
 }
 
 bool drawing_area::on_button_release_event(GdkEventButton* event)
 {
+    if (event->button == 3)
+    {
+        panning_ = false;
+        return true;
+    }
+
     pointer_event pointer_event =
     {
         transform_.to_model({float(event->x), float(event->y)}),
@@ -179,13 +194,22 @@ bool drawing_area::on_button_release_event(GdkEventButton* event)
 
 bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
 {
-    pointer_event pointer_event =
+    if (panning_)
     {
-        transform_.to_model({float(event->x), float(event->y)}),
-        event->state
-    };
+        auto offset = transform_.to_model_scale({float(event->x), float(event->y)});
+        transform_.set_focus(grab_position_ - offset);
+    }
+    else
+    {
+        pointer_event pointer_event =
+        {
+            transform_.to_model({float(event->x), float(event->y)}),
+            event->state
+        };
 
-    tool_->on_motion_notify_event(pointer_event);
+        tool_->on_motion_notify_event(pointer_event);
+    }
+
     queue_draw();
     return true;
 }

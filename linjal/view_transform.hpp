@@ -10,12 +10,17 @@ class view_transform
 public:
     view_transform();
     cml::vector2f to_model(cml::vector2f const& screen) const;
+    cml::vector2f to_model_scale(cml::vector2f const& screen_scale) const;
     cml::vector2f to_screen(cml::vector2f const& model) const;
+
+    cml::vector2f get_focus();
+    void set_focus(cml::vector2f const& focus);
     void zoom_in();
     void zoom_out();
     int zoom() const;
 
 private:
+    cml::vector2f focus_;
     int zoom_;
 };
 

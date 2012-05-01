@@ -31,6 +31,8 @@ private:
     shape* shape_;
     view_transform transform_;
     std::unique_ptr<tool> tool_;
+    bool panning_;
+    cml::vector2f grab_position_;
 
     friend class pen_tool;
     friend class select_tool;

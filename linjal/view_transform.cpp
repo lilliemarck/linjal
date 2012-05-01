@@ -2,18 +2,33 @@
 
 namespace linjal {
 
-view_transform::view_transform() : zoom_(1)
+view_transform::view_transform() : focus_(0.0f, 0.0f), zoom_(1)
 {
 }
 
-cml::vector2f view_transform::to_model(const cml::vector2f& screen) const
+cml::vector2f view_transform::to_model(cml::vector2f const& screen) const
 {
-    return screen / zoom_;
+    return screen / zoom_ + focus_;
 }
 
-cml::vector2f view_transform::to_screen(const cml::vector2f& model) const
+cml::vector2f view_transform::to_model_scale(cml::vector2f const& screen_scale) const
 {
-    return model * zoom_;
+    return screen_scale / zoom_;
+}
+
+cml::vector2f view_transform::to_screen(cml::vector2f const & model) const
+{
+    return (model - focus_) * zoom_;
+}
+
+cml::vector2f view_transform::get_focus()
+{
+    return focus_;
+}
+
+void view_transform::set_focus(cml::vector2f const& focus)
+{
+    focus_.set(round(focus[0]), round(focus[1]));
 }
 
 void view_transform::zoom_in()
