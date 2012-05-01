@@ -216,14 +216,19 @@ bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
 
 bool drawing_area::on_scroll_event(GdkEventScroll* event)
 {
+    cml::vector2f screen_position = {float(event->x), float(event->y)};
+
     if (event->direction == GDK_SCROLL_UP)
     {
-        transform_.zoom_in();
+        transform_.set_zoom(transform_.zoom() + 1, screen_position);
     }
-    // Zoom out
     else if (event->direction == GDK_SCROLL_DOWN)
     {
-        transform_.zoom_out();
+        int zoom = transform_.zoom();
+        if (zoom > 1)
+        {
+            transform_.set_zoom(zoom - 1, screen_position);
+        }
     }
 
     queue_draw();

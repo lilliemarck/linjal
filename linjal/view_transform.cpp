@@ -31,17 +31,10 @@ void view_transform::set_focus(cml::vector2f const& focus)
     focus_.set(round(focus[0]), round(focus[1]));
 }
 
-void view_transform::zoom_in()
+void view_transform::set_zoom(int zoom, cml::vector2f const& screen_focus)
 {
-    ++zoom_;
-}
-
-void view_transform::zoom_out()
-{
-    if (zoom_ > 1)
-    {
-        --zoom_;
-    }
+    focus_ = focus_ + screen_focus / zoom_ - screen_focus / zoom;
+    zoom_ = zoom;
 }
 
 int view_transform::zoom() const

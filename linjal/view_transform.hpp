@@ -15,8 +15,8 @@ public:
 
     cml::vector2f get_focus();
     void set_focus(cml::vector2f const& focus);
-    void zoom_in();
-    void zoom_out();
+
+    void set_zoom(int zoom, cml::vector2f const& screen_focus);
     int zoom() const;
 
 private:
