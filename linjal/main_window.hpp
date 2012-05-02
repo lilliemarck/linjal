@@ -9,21 +9,28 @@
 
 namespace linjal {
 
+class color_palette_window;
+
 class main_window : public Gtk::Window
 {
 public:
     main_window();
+    ~main_window();
 
 private:
     void create_actions();
+    void show_palette();
     void show_about_dialog();
 
+    model model_;
     Glib::RefPtr<Gtk::UIManager> ui_manager_;
     Glib::RefPtr<Gtk::ActionGroup> action_group_;
     Glib::RefPtr<Gtk::RadioAction> pen_tool_action_;
     Glib::RefPtr<Gtk::RadioAction> select_tool_action_;
     Gtk::VBox vbox_;
     drawing_area drawing_area_;
+
+    std::unique_ptr<color_palette_window> color_palette_window_;
 };
 
 } // namespace linjal

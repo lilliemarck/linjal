@@ -13,7 +13,7 @@ namespace linjal {
 class drawing_area : public Gtk::DrawingArea
 {
 public:
-    drawing_area();
+    drawing_area(model &model);
     void new_shape();
     void use_pen_tool();
     void use_select_tool();
@@ -27,7 +27,7 @@ private:
     bool on_scroll_event(GdkEventScroll* event);
     void on_shape_deleted(shape* shape);
 
-    model model_;
+    model& model_;
     shape* shape_;
     camera camera_;
     std::unique_ptr<tool> tool_;

@@ -14,6 +14,12 @@ namespace
     }
 } // namespace
 
+model::model()
+{
+    colors_.push_back({"red", {255, 0, 0, 255}});
+    colors_.push_back({"green", {0, 255, 0, 255}});
+}
+
 shape& model::new_shape()
 {
     shapes_.emplace_back();
@@ -91,9 +97,53 @@ void model::draw(Cairo::RefPtr<Cairo::Context> const& cairo, camera const& camer
     }
 }
 
+size_t model::new_color()
+{
+    size_t index  = colors_.size();
+    colors_.push_back({"color", {0, 0, 255, 255}});
+    return index;
+}
+
+void model::delete_color(size_t index)
+{
+    colors_.erase(colors_.begin() + index);
+}
+
+size_t model::color_count() const
+{
+    return colors_.size();
+}
+
+std::string model::get_color_name(size_t index) const
+{
+    return colors_[index].name;
+}
+
+void model::set_color_name(size_t index, std::string const& name)
+{
+    colors_[index].name = name;
+    color_changed_();
+}
+
+color model::get_color(size_t index) const
+{
+    return colors_[index].color;
+}
+
+void model::set_color(size_t index, color const& color)
+{
+    colors_[index].color = color;
+    color_changed_();
+}
+
 sigc::signal<void,shape*>& model::signal_shape_deleted()
 {
     return shape_deleted_;
+}
+
+sigc::signal<void>& model::signal_color_changed()
+{
+    return color_changed_;
 }
 
 } // namespace linjal

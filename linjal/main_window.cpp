@@ -4,6 +4,7 @@
 #include <gtkmm/radioaction.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
+#include "color_palette_window.hpp"
 
 namespace linjal {
 
@@ -26,13 +27,15 @@ namespace
         "    <toolitem action='new_shape'/>"
         "    <toolitem action='pen'/>"
         "    <toolitem action='select'/>"
+        "    <toolitem action='palette'/>"
         "  </toolbar>"
         "</ui>";
 }
 
 main_window::main_window() :
     ui_manager_(Gtk::UIManager::create()),
-    action_group_(Gtk::ActionGroup::create())
+    action_group_(Gtk::ActionGroup::create()),
+    drawing_area_(model_)
 {
     set_title("Linjal");
     set_default_size(640, 400);
@@ -42,6 +45,10 @@ main_window::main_window() :
     create_actions();
     vbox_.pack_start(drawing_area_);
     show_all_children();
+}
+
+main_window::~main_window()
+{
 }
 
 void main_window::create_actions()
@@ -61,6 +68,8 @@ void main_window::create_actions()
 
     action_group_->add(Gtk::Action::create("new_shape", "New Shape"),
                        sigc::mem_fun(drawing_area_, &drawing_area::new_shape));
+    action_group_->add(Gtk::Action::create("palette", "Palette"),
+                       sigc::mem_fun(this, &main_window::show_palette));
 
     Gtk::RadioAction::Group tool_group;
     pen_tool_action_ = Gtk::RadioAction::create(tool_group, "pen", "Pen");
@@ -97,6 +106,16 @@ void main_window::create_actions()
     }
 
     add_accel_group(ui_manager_->get_accel_group());
+}
+
+void main_window::show_palette()
+{
+    if (!color_palette_window_)
+    {
+        color_palette_window_ = std::unique_ptr<color_palette_window>(new color_palette_window(model_));
+    }
+
+    color_palette_window_->present();
 }
 
 void main_window::show_about_dialog()

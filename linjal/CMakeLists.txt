@@ -8,6 +8,10 @@ include_directories(${CML_INCLUDE_DIR})
 
 add_executable(linjal
     camera.cpp
+    color_cell_renderer.cpp
+    color_palette_model.cpp
+    color_palette_widget.cpp
+    color_palette_window.cpp
     drawing_area.cpp
     main.cpp
     main_window.cpp

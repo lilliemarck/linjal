@@ -4,11 +4,15 @@
 
 namespace linjal {
 
-drawing_area::drawing_area() : shape_(nullptr), panning_(false)
+drawing_area::drawing_area(model& model) :
+    model_(model),
+    shape_(nullptr),
+    panning_(false)
 {
     use_pen_tool();
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
     model_.signal_shape_deleted().connect(sigc::mem_fun(this, &drawing_area::on_shape_deleted));
+    model_.signal_color_changed().connect(sigc::mem_fun(this, &drawing_area::queue_draw));
 }
 
 void drawing_area::new_shape()
