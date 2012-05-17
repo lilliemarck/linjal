@@ -28,6 +28,7 @@ namespace
         "    <toolitem action='pen'/>"
         "    <toolitem action='select'/>"
         "    <toolitem action='palette'/>"
+        "    <toolitem action='color'/>"
         "  </toolbar>"
         "</ui>";
 }
@@ -70,6 +71,8 @@ void main_window::create_actions()
                        sigc::mem_fun(drawing_area_, &drawing_area::new_shape));
     action_group_->add(Gtk::Action::create("palette", "Palette"),
                        sigc::mem_fun(this, &main_window::show_palette));
+    action_group_->add(Gtk::Action::create("color", "Color"),
+                       sigc::mem_fun(this, &main_window::show_color_chooser));
 
     Gtk::RadioAction::Group tool_group;
     pen_tool_action_ = Gtk::RadioAction::create(tool_group, "pen", "Pen");
@@ -116,6 +119,29 @@ void main_window::show_palette()
     }
 
     color_palette_window_->present();
+}
+
+void main_window::show_color_chooser()
+{
+    if (!color_palette_dialog_)
+    {
+        color_palette_dialog_ = std::unique_ptr<color_palette_window>(new color_palette_window(model_));
+        color_palette_dialog_->set_title("Select Color");
+        color_palette_dialog_->get_color_palette_widget().signal_color_index_changed().connect(sigc::mem_fun(this, &main_window::on_color_index_changed));
+    }
+
+    color_palette_dialog_->present();
+}
+
+void main_window::on_color_index_changed(size_t color_index)
+{
+    shape *shape = drawing_area_.selected_shape();
+
+    if (shape && color_index < model_.color_count())
+    {
+        shape->color_index = color_index;
+        drawing_area_.queue_draw();
+    }
 }
 
 void main_window::show_about_dialog()

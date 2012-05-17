@@ -34,7 +34,10 @@ namespace
 color_palette_model::color_palette_model(model& model) :
     Glib::ObjectBase(typeid(color_palette_model)),
     model_(model)
-{}
+{
+    model_.signal_color_inserted().connect(sigc::mem_fun(this, &color_palette_model::on_color_inserted));
+    model_.signal_color_deleted().connect(sigc::mem_fun(this, &color_palette_model::on_color_deleted));
+}
 
 Glib::RefPtr<color_palette_model> color_palette_model::create(model& model)
 {
@@ -170,6 +173,18 @@ void color_palette_model::get_value_vfunc(iterator const& iter, int column, Glib
             set_glib_value<color>(value, model_.get_color(index));
             break;
     }
+}
+
+void color_palette_model::on_color_inserted(size_t index)
+{
+    Path path(1, index);
+    row_inserted(path, get_iter(path));
+}
+
+void color_palette_model::on_color_deleted(size_t index)
+{
+    Path path(1, index);
+    row_deleted(path);
 }
 
 } // namespace linjal

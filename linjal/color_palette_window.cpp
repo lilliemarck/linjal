@@ -12,4 +12,9 @@ color_palette_window::color_palette_window(model& model) :
     show_all_children();
 }
 
+color_palette_widget& color_palette_window::get_color_palette_widget()
+{
+    return color_palette_widget_;
+}
+
 } // namespace linjal

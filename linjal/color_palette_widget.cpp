@@ -71,6 +71,11 @@ size_t color_palette_widget::get_selected_color_index()
     return color_palette_model_->get_index(iter);
 }
 
+sigc::signal<void,size_t>& color_palette_widget::signal_color_index_changed()
+{
+    return color_index_changed_;
+}
+
 void color_palette_widget::on_selection_changed()
 {
     size_t color_index = get_selected_color_index();
@@ -108,14 +113,7 @@ void color_palette_widget::on_color_edited(Glib::ustring const& path, color cons
 
 void color_palette_widget::on_add_color()
 {
-    size_t color_index = model_.new_color();
-    Gtk::TreeModel::Path path(1, color_index);
-    Gtk::TreeModel::iterator iter(color_palette_model_->get_iter(path));
-
-    if (iter)
-    {
-        color_palette_model_->row_inserted(path, iter);
-    }
+    model_.new_color();
 }
 
 void color_palette_widget::on_remove_color()
@@ -125,7 +123,6 @@ void color_palette_widget::on_remove_color()
     if (model_.color_count() > 1 && color_index < model_.color_count())
     {
         model_.delete_color(color_index);
-        color_palette_model_->row_deleted(Gtk::TreeModel::Path(1, color_index));
     }
 }
 

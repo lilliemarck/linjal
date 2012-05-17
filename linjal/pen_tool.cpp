@@ -45,7 +45,7 @@ void pen_tool::on_delete()
 {
     if (shape* shape = drawing_area_->shape_)
     {
-        erase_points(*shape, selection_);
+        erase_points(shape->path, selection_);
     }
 
     selection_.clear();
@@ -62,8 +62,9 @@ void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 
     auto const& camera = drawing_area_->camera_;
     shape const& shape = *drawing_area_->shape_;
+    path const& path = shape.path;
 
-    for (size_t i = 0; i < shape.size(); ++i)
+    for (size_t i = 0; i < path.size(); ++i)
     {
         if (selection_.find(i) != end(selection_))
         {
@@ -74,10 +75,10 @@ void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
             cairo->set_source_rgb(0.0, 0.0, 0.0);
         }
 
-        cairo_cirlce(cairo, camera.to_screen_space(shape[i].position), 2.0f);
+        cairo_cirlce(cairo, camera.to_screen_space(path[i].position), 2.0f);
         cairo->fill();
         cairo->set_source_rgb(0.0, 0.0, 0.0);
-        cairo_cirlce(cairo, camera.to_screen_space(shape[i].control_point), 1.0f);
+        cairo_cirlce(cairo, camera.to_screen_space(path[i].control_point), 1.0f);
         cairo->fill();
     }
 }
@@ -95,8 +96,8 @@ void pen_tool::on_button_press_event(pointer_event const& event)
     {
         case point_ref::null:
         {
-            shape& shape = *drawing_area_->shape_;
-            size_t index = iterator_to_index(shape, insert_point(shape, snapped));
+            path& path = drawing_area_->shape_->path;
+            size_t index = iterator_to_index(path, insert_point(path, snapped));
             highlight_.set_control_point(index);
             selection_.clear();
             state_ = state::drag_control_point;
@@ -143,7 +144,7 @@ void pen_tool::on_motion_notify_event(pointer_event const& event)
         return;
     }
 
-    shape& shape = *drawing_area_->shape_;
+    path& path = drawing_area_->shape_->path;
     cml::vector2f snapped = snap_position(0.5f, event.model_position);
 
     switch (state_)
@@ -152,7 +153,7 @@ void pen_tool::on_motion_notify_event(pointer_event const& event)
         {
             // Don't think it hurts to use the snapped position here
             float distance;
-            highlight_ = nearest_point(shape, snapped, distance);
+            highlight_ = nearest_point(path, snapped, distance);
             distance *= drawing_area_->camera_.get_zoom();
 
             if (highlight_.type() == point_ref::position && distance < 5.0)
@@ -176,7 +177,7 @@ void pen_tool::on_motion_notify_event(pointer_event const& event)
             cml::vector2f move = snapped - drag_origin_;
             for (size_t index : selection_)
             {
-                shape[index].position += move;
+                path[index].position += move;
             }
             drag_origin_ = snapped;
             break;
@@ -184,7 +185,7 @@ void pen_tool::on_motion_notify_event(pointer_event const& event)
 
         case state::drag_control_point:
         {
-            shape[*highlight_].control_point = snapped;
+            path[*highlight_].control_point = snapped;
             break;
         }
     }

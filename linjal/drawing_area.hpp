@@ -18,6 +18,7 @@ public:
     void use_pen_tool();
     void use_select_tool();
     void delete_selection();
+    shape* selected_shape();
 
 private:
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);

@@ -44,6 +44,9 @@ private:
     virtual Path get_path_vfunc(iterator const& iter) const;
     virtual void get_value_vfunc(iterator const& iter, int column, Glib::ValueBase& value) const;
 
+    void on_color_inserted(size_t index);
+    void on_color_deleted(size_t index);
+
     model& model_;
 };
 

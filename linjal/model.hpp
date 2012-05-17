@@ -31,6 +31,8 @@ public:
     void set_color(size_t index, color const& color);
 
     sigc::signal<void,shape*>& signal_shape_deleted();
+    sigc::signal<void,size_t>& signal_color_inserted();
+    sigc::signal<void,size_t>& signal_color_deleted();
     sigc::signal<void>& signal_color_changed();
 
 private:
@@ -43,6 +45,8 @@ private:
     std::vector<shape> shapes_;
     std::vector<named_color> colors_;
     sigc::signal<void,shape*> shape_deleted_;
+    sigc::signal<void,size_t> color_inserted_;
+    sigc::signal<void,size_t> color_deleted_;
     sigc::signal<void> color_changed_;
 };
 

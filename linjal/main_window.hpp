@@ -20,6 +20,8 @@ public:
 private:
     void create_actions();
     void show_palette();
+    void show_color_chooser();
+    void on_color_index_changed(size_t color_index);
     void show_about_dialog();
 
     model model_;
@@ -31,6 +33,7 @@ private:
     drawing_area drawing_area_;
 
     std::unique_ptr<color_palette_window> color_palette_window_;
+    std::unique_ptr<color_palette_window> color_palette_dialog_;
 };
 
 } // namespace linjal

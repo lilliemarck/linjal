@@ -19,6 +19,7 @@ public:
     ~color_palette_widget();
 
     size_t get_selected_color_index();
+    sigc::signal<void,size_t>& signal_color_index_changed();
 
 private:
     void setup_tree_view();

@@ -41,6 +41,11 @@ void drawing_area::delete_selection()
     queue_draw();
 }
 
+shape* drawing_area::selected_shape()
+{
+    return shape_;
+}
+
 bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
     cairo->set_source_rgb(1.0, 1.0, 1.0);

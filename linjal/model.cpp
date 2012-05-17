@@ -47,7 +47,7 @@ void model::delete_degenerate_shapes()
     for (auto iter = begin(shapes_); iter != end(shapes_);)
     {
         auto& shape = *iter;
-        shape_curve(shape, cairo, no_transform);
+        path_curve(shape.path, cairo, no_transform);
 
         double x1, y1, x2, y2;
         cairo->get_fill_extents(x1, y1, x2, y2);
@@ -73,7 +73,7 @@ shape* model::pick(cml::vector2f const& position)
 
     for (auto& shape : shapes_)
     {
-        shape_curve(shape, cairo, no_transform);
+        path_curve(shape.path, cairo, no_transform);
 
         if (cairo->in_fill(position[0], position[1]))
         {
@@ -88,11 +88,11 @@ shape* model::pick(cml::vector2f const& position)
 
 void model::draw(Cairo::RefPtr<Cairo::Context> const& cairo, camera const& camera)
 {
-    cairo->set_source_rgb(0.3, 0.4, 0.7);
-
     for (auto const& shape : shapes_)
     {
-        shape_curve(shape, cairo, camera);
+        color const& color = colors_[shape.color_index].color;
+        cairo->set_source_rgb(color.r / 255.0, color.g / 255.0, color.b / 255.0);
+        path_curve(shape.path, cairo, camera);
         cairo->fill();
     }
 }
@@ -101,12 +101,14 @@ size_t model::new_color()
 {
     size_t index  = colors_.size();
     colors_.push_back({"color", {0, 0, 255, 255}});
+    color_inserted_(index);
     return index;
 }
 
 void model::delete_color(size_t index)
 {
     colors_.erase(colors_.begin() + index);
+    color_deleted_(index);
 }
 
 size_t model::color_count() const
@@ -139,6 +141,16 @@ void model::set_color(size_t index, color const& color)
 sigc::signal<void,shape*>& model::signal_shape_deleted()
 {
     return shape_deleted_;
+}
+
+sigc::signal<void,size_t>& model::signal_color_inserted()
+{
+    return color_inserted_;
+}
+
+sigc::signal<void,size_t>& model::signal_color_deleted()
+{
+    return color_deleted_;
 }
 
 sigc::signal<void>& model::signal_color_changed()
