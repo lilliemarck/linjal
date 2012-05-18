@@ -12,8 +12,9 @@ public:
     cml::vector2f to_model_space(cml::vector2f const& position) const;
     cml::vector2f to_model_scale(cml::vector2f const& size) const;
     cml::vector2f to_screen_space(cml::vector2f const& position) const;
+    cml::vector2f to_screen_scale(cml::vector2f const& size) const;
 
-    cml::vector2i get_position();
+    cml::vector2i get_position() const;
     void set_position(cml::vector2i const& position);
 
     int get_zoom() const;

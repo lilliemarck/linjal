@@ -1,5 +1,6 @@
 #include "main_window.hpp"
 #include <gtkmm/aboutdialog.h>
+#include <gtkmm/filechooserdialog.h>
 #include <gtkmm/main.h>
 #include <gtkmm/radioaction.h>
 #include <gtkmm/stock.h>
@@ -14,6 +15,7 @@ namespace
         "<ui>"
         "  <menubar name='menu_bar'>"
         "    <menu action='file_menu'>"
+        "      <menuitem action='open_image'/>"
         "      <menuitem action='quit'/>"
         "    </menu>"
         "    <menu action='edit_menu'>"
@@ -55,6 +57,8 @@ main_window::~main_window()
 void main_window::create_actions()
 {
     action_group_->add(Gtk::Action::create("file_menu", "_File"));
+    action_group_->add(Gtk::Action::create("open_image", Gtk::Stock::OPEN),
+        sigc::mem_fun(this, &main_window::show_select_image_dialog));
     action_group_->add(Gtk::Action::create("quit", Gtk::Stock::QUIT),
         sigc::ptr_fun(Gtk::Main::quit));
 
@@ -155,6 +159,25 @@ void main_window::show_about_dialog()
     dialog.set_website_label("Hosted on GitHub");
     dialog.set_authors(authors);
     dialog.run();
+}
+
+void main_window::show_select_image_dialog()
+{
+    Gtk::FileChooserDialog dialog("Open File...");
+    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_ACCEPT);
+
+    if (dialog.run() == Gtk::RESPONSE_ACCEPT)
+    {
+        try
+        {
+            auto image = Cairo::ImageSurface::create_from_png(dialog.get_filename());
+            drawing_area_.set_image(image);
+        }
+        catch (...)
+        {
+        }
+    }
 }
 
 } // namespace linjal

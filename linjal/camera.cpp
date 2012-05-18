@@ -21,7 +21,12 @@ cml::vector2f camera::to_screen_space(cml::vector2f const & model) const
     return (model - position_) * zoom_;
 }
 
-cml::vector2i camera::get_position()
+cml::vector2f camera::to_screen_scale(cml::vector2f const& size) const
+{
+    return size * zoom_;
+}
+
+cml::vector2i camera::get_position() const
 {
     return position_;
 }

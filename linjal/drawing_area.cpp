@@ -46,10 +46,22 @@ shape* drawing_area::selected_shape()
     return shape_;
 }
 
+void drawing_area::set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image)
+{
+    image_pattern_ = Cairo::SurfacePattern::create(image);
+    image_pattern_->set_filter(Cairo::FILTER_NEAREST);
+}
+
 bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
     cairo->set_source_rgb(1.0, 1.0, 1.0);
     cairo->paint();
+
+    if (image_pattern_)
+    {
+        draw_image(cairo);
+    }
+
     model_.draw(cairo, camera_);
     tool_->on_draw(cairo);
     return true;
@@ -147,6 +159,19 @@ void drawing_area::on_shape_deleted(shape* shape)
     {
         shape_ = nullptr;
     }
+}
+
+void drawing_area::draw_image(Cairo::RefPtr<Cairo::Context> const& cairo) const
+{
+    auto position = camera_.get_position();
+    auto inv_zoom = 1.0 / camera_.get_zoom();
+
+    image_pattern_->set_matrix(Cairo::Matrix(inv_zoom, 0.0,
+                                             0.0, inv_zoom,
+                                             position[0], position[1]));
+
+    cairo->set_source(image_pattern_);
+    cairo->paint();
 }
 
 } // namespace linjal

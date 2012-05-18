@@ -19,6 +19,7 @@ public:
     void use_select_tool();
     void delete_selection();
     shape* selected_shape();
+    void set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image);
 
 private:
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);
@@ -27,6 +28,7 @@ private:
     bool on_motion_notify_event(GdkEventMotion* event);
     bool on_scroll_event(GdkEventScroll* event);
     void on_shape_deleted(shape* shape);
+    void draw_image(Cairo::RefPtr<Cairo::Context> const& cairo) const;
 
     model& model_;
     shape* shape_;
@@ -34,6 +36,7 @@ private:
     std::unique_ptr<tool> tool_;
     bool panning_;
     cml::vector2f grab_position_;
+    Cairo::RefPtr<Cairo::SurfacePattern> image_pattern_;
 
     friend class tool;
     friend class pen_tool;
