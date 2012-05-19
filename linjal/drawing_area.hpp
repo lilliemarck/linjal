@@ -20,6 +20,7 @@ public:
     void delete_selection();
     shape* selected_shape();
     void set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image);
+    void set_image_visible(bool visible);
 
 private:
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);
@@ -37,6 +38,7 @@ private:
     bool panning_;
     cml::vector2f grab_position_;
     Cairo::RefPtr<Cairo::SurfacePattern> image_pattern_;
+    bool image_visible_;
 
     friend class tool;
     friend class pen_tool;

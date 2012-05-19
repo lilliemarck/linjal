@@ -20,6 +20,7 @@ namespace
         "    </menu>"
         "    <menu action='edit_menu'>"
         "      <menuitem action='delete'/>"
+        "      <menuitem action='show_image'/>"
         "    </menu>"
         "    <menu action='help_menu'>"
         "      <menuitem action='about'/>"
@@ -66,6 +67,12 @@ void main_window::create_actions()
     action_group_->add(Gtk::Action::create("delete", Gtk::Stock::DELETE),
         Gtk::AccelKey("Delete"),
         sigc::mem_fun(drawing_area_, &drawing_area::delete_selection));
+
+    show_image_action_ = Gtk::ToggleAction::create("show_image", "Show Image", Glib::ustring(), true);
+    action_group_->add(show_image_action_, [=]()
+    {
+        drawing_area_.set_image_visible(show_image_action_->get_active());
+    });
 
     action_group_->add(Gtk::Action::create("help_menu", "_Help"));
     action_group_->add(Gtk::Action::create("about", Gtk::Stock::ABOUT),

@@ -27,6 +27,7 @@ private:
 
     model model_;
     Glib::RefPtr<Gtk::UIManager> ui_manager_;
+    Glib::RefPtr<Gtk::ToggleAction> show_image_action_;
     Glib::RefPtr<Gtk::ActionGroup> action_group_;
     Glib::RefPtr<Gtk::RadioAction> pen_tool_action_;
     Glib::RefPtr<Gtk::RadioAction> select_tool_action_;

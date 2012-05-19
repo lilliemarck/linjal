@@ -7,7 +7,8 @@ namespace linjal {
 drawing_area::drawing_area(model& model) :
     model_(model),
     shape_(nullptr),
-    panning_(false)
+    panning_(false),
+    image_visible_(true)
 {
     use_pen_tool();
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
@@ -52,12 +53,17 @@ void drawing_area::set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image)
     image_pattern_->set_filter(Cairo::FILTER_NEAREST);
 }
 
+void drawing_area::set_image_visible(bool visible)
+{
+    image_visible_ = visible;
+}
+
 bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
     cairo->set_source_rgb(1.0, 1.0, 1.0);
     cairo->paint();
 
-    if (image_pattern_)
+    if (image_pattern_ && image_visible_)
     {
         draw_image(cairo);
     }
