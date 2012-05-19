@@ -58,6 +58,32 @@ void drawing_area::set_image_visible(bool visible)
     image_visible_ = visible;
 }
 
+void drawing_area::move_shape_up()
+{
+    if (shape_)
+    {
+        size_t new_index = model_.index_of_shape(*shape_) + 1;
+        if (new_index < model_.shape_count())
+        {
+            shape_ = &model_.replace_shape(*shape_, new_index);
+        }
+        queue_draw();
+    }
+}
+
+void drawing_area::move_shape_down()
+{
+    if (shape_)
+    {
+        size_t new_index = model_.index_of_shape(*shape_) - 1;
+        if (new_index < model_.shape_count())
+        {
+            shape_ = &model_.replace_shape(*shape_, new_index);
+        }
+        queue_draw();
+    }
+}
+
 bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
     cairo->set_source_rgb(1.0, 1.0, 1.0);

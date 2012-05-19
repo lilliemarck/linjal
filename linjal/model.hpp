@@ -18,6 +18,9 @@ public:
     model();
     shape& new_shape();
     void delete_shape(shape& shape);
+    size_t shape_count() const;
+    size_t index_of_shape(shape& shape);
+    shape& replace_shape(shape& shape, size_t new_index);
     void delete_degenerate_shapes();
     shape* pick(cml::vector2f const& position);
     void draw(Cairo::RefPtr<Cairo::Context> const& cairo, camera const& camera);

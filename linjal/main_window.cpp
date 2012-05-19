@@ -21,6 +21,8 @@ namespace
         "    <menu action='edit_menu'>"
         "      <menuitem action='delete'/>"
         "      <menuitem action='show_image'/>"
+        "      <menuitem action='move_shape_up'/>"
+        "      <menuitem action='move_shape_down'/>"
         "    </menu>"
         "    <menu action='help_menu'>"
         "      <menuitem action='about'/>"
@@ -73,6 +75,14 @@ void main_window::create_actions()
     {
         drawing_area_.set_image_visible(show_image_action_->get_active());
     });
+
+    action_group_->add(Gtk::Action::create("move_shape_up", "Move Shape Up"),
+                       Gtk::AccelKey("Page_Up"),
+                       sigc::mem_fun(drawing_area_, &drawing_area::move_shape_up));
+
+    action_group_->add(Gtk::Action::create("move_shape_down", "Move Shape Up"),
+                       Gtk::AccelKey("Page_Down"),
+                       sigc::mem_fun(drawing_area_, &drawing_area::move_shape_down));
 
     action_group_->add(Gtk::Action::create("help_menu", "_Help"));
     action_group_->add(Gtk::Action::create("about", Gtk::Stock::ABOUT),

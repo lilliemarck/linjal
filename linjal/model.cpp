@@ -39,6 +39,23 @@ void model::delete_shape(shape& shape)
     }
 }
 
+size_t model::shape_count() const
+{
+    return shapes_.size();
+}
+
+size_t model::index_of_shape(shape& shape)
+{
+    return &shape - shapes_.data();
+}
+
+shape& model::replace_shape(shape& shape, size_t new_index)
+{
+    linjal::shape& new_shape = shapes_[new_index];
+    std::swap(new_shape, shape);
+    return new_shape;
+}
+
 void model::delete_degenerate_shapes()
 {
     auto cairo = create_null_cairo_context();

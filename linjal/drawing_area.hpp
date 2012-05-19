@@ -21,6 +21,8 @@ public:
     shape* selected_shape();
     void set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image);
     void set_image_visible(bool visible);
+    void move_shape_up();
+    void move_shape_down();
 
 private:
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);
