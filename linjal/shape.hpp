@@ -16,7 +16,7 @@ struct node
     cml::vector2f control_point;
 };
 
-typedef std::vector<node> path;
+using path = std::vector<node>;
 
 struct shape
 {
