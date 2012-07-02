@@ -13,23 +13,23 @@ namespace
 {
     static const Glib::ustring ui_definition =
         "<ui>"
-        "  <menubar name='menu_bar'>"
-        "    <menu action='file_menu'>"
-        "      <menuitem action='open_image'/>"
+        "  <menubar name='menu-bar'>"
+        "    <menu action='file-menu'>"
+        "      <menuitem action='open-image'/>"
         "      <menuitem action='quit'/>"
         "    </menu>"
-        "    <menu action='edit_menu'>"
+        "    <menu action='edit-menu'>"
         "      <menuitem action='delete'/>"
-        "      <menuitem action='show_image'/>"
-        "      <menuitem action='move_shape_up'/>"
-        "      <menuitem action='move_shape_down'/>"
+        "      <menuitem action='show-image'/>"
+        "      <menuitem action='move-shape-up'/>"
+        "      <menuitem action='move-shape-down'/>"
         "    </menu>"
         "    <menu action='help_menu'>"
         "      <menuitem action='about'/>"
         "    </menu>"
         "  </menubar>"
         "  <toolbar name='toolbar'>"
-        "    <toolitem action='new_shape'/>"
+        "    <toolitem action='new-shape'/>"
         "    <toolitem action='pen'/>"
         "    <toolitem action='select'/>"
         "    <toolitem action='palette'/>"
@@ -59,36 +59,36 @@ main_window::~main_window()
 
 void main_window::create_actions()
 {
-    action_group_->add(Gtk::Action::create("file_menu", "_File"));
-    action_group_->add(Gtk::Action::create("open_image", Gtk::Stock::OPEN),
+    action_group_->add(Gtk::Action::create("file-menu", "_File"));
+    action_group_->add(Gtk::Action::create("open-image", Gtk::Stock::OPEN),
         sigc::mem_fun(this, &main_window::show_select_image_dialog));
     action_group_->add(Gtk::Action::create("quit", Gtk::Stock::QUIT),
         sigc::ptr_fun(Gtk::Main::quit));
 
-    action_group_->add(Gtk::Action::create("edit_menu", "_Edit"));
+    action_group_->add(Gtk::Action::create("edit-menu", "_Edit"));
     action_group_->add(Gtk::Action::create("delete", Gtk::Stock::DELETE),
         Gtk::AccelKey("Delete"),
         sigc::mem_fun(drawing_area_, &drawing_area::delete_selection));
 
-    show_image_action_ = Gtk::ToggleAction::create("show_image", "Show Image", Glib::ustring(), true);
+    show_image_action_ = Gtk::ToggleAction::create("show-image", "Show Image", Glib::ustring(), true);
     action_group_->add(show_image_action_, [=]()
     {
         drawing_area_.set_image_visible(show_image_action_->get_active());
     });
 
-    action_group_->add(Gtk::Action::create("move_shape_up", "Move Shape Up"),
+    action_group_->add(Gtk::Action::create("move-shape-up", "Move Shape Up"),
                        Gtk::AccelKey("Page_Up"),
                        sigc::mem_fun(drawing_area_, &drawing_area::move_shape_up));
 
-    action_group_->add(Gtk::Action::create("move_shape_down", "Move Shape Up"),
+    action_group_->add(Gtk::Action::create("move-shape-down", "Move Shape Up"),
                        Gtk::AccelKey("Page_Down"),
                        sigc::mem_fun(drawing_area_, &drawing_area::move_shape_down));
 
-    action_group_->add(Gtk::Action::create("help_menu", "_Help"));
+    action_group_->add(Gtk::Action::create("help-menu", "_Help"));
     action_group_->add(Gtk::Action::create("about", Gtk::Stock::ABOUT),
           sigc::mem_fun(this, &main_window::show_about_dialog));
 
-    action_group_->add(Gtk::Action::create("new_shape", "New Shape"),
+    action_group_->add(Gtk::Action::create("new-shape", "New Shape"),
                        sigc::mem_fun(drawing_area_, &drawing_area::new_shape));
     action_group_->add(Gtk::Action::create("palette", "Palette"),
                        sigc::mem_fun(this, &main_window::show_palette));
@@ -118,7 +118,7 @@ void main_window::create_actions()
     ui_manager_->insert_action_group(action_group_);
     ui_manager_->add_ui_from_string(ui_definition);
 
-    if (Gtk::Widget* menu_bar = ui_manager_->get_widget("/menu_bar"))
+    if (Gtk::Widget* menu_bar = ui_manager_->get_widget("/menu-bar"))
     {
         vbox_.pack_start(*menu_bar, Gtk::PACK_SHRINK);
     }
