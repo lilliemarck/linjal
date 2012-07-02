@@ -84,6 +84,20 @@ void drawing_area::move_shape_down()
     }
 }
 
+Cairo::RefPtr<Cairo::ImageSurface> drawing_area::draw_to_image_surface()
+{
+    auto width = get_width();
+    auto height = get_height();
+    auto image = Cairo::ImageSurface::create(Cairo::Format::FORMAT_RGB24, width, height);
+    auto cairo = Cairo::Context::create(image);
+
+    cairo->set_source_rgb(1.0, 1.0, 1.0);
+    cairo->paint();
+    model_.draw(cairo, camera_);
+
+    return image;
+}
+
 bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
     cairo->set_source_rgb(1.0, 1.0, 1.0);

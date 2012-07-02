@@ -24,6 +24,7 @@ private:
     void on_color_index_changed(size_t color_index);
     void show_about_dialog();
     void show_select_image_dialog();
+    void show_export_dialog();
 
     model model_;
     Glib::RefPtr<Gtk::UIManager> ui_manager_;

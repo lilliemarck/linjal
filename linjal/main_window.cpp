@@ -16,6 +16,7 @@ namespace
         "  <menubar name='menu-bar'>"
         "    <menu action='file-menu'>"
         "      <menuitem action='open-image'/>"
+        "      <menuitem action='export-to-png'/>"
         "      <menuitem action='quit'/>"
         "    </menu>"
         "    <menu action='edit-menu'>"
@@ -62,6 +63,8 @@ void main_window::create_actions()
     action_group_->add(Gtk::Action::create("file-menu", "_File"));
     action_group_->add(Gtk::Action::create("open-image", Gtk::Stock::OPEN),
         sigc::mem_fun(this, &main_window::show_select_image_dialog));
+    action_group_->add(Gtk::Action::create("export-to-png", Gtk::Stock::SAVE_AS),
+        sigc::mem_fun(this, &main_window::show_export_dialog));
     action_group_->add(Gtk::Action::create("quit", Gtk::Stock::QUIT),
         sigc::ptr_fun(Gtk::Main::quit));
 
@@ -194,6 +197,24 @@ void main_window::show_select_image_dialog()
         catch (...)
         {
         }
+    }
+}
+
+void main_window::show_export_dialog()
+{
+    Glib::RefPtr<Gtk::FileFilter> filter = Gtk::FileFilter::create();
+    filter->set_name("PNG image");
+    filter->add_pattern("*.png");
+
+    Gtk::FileChooserDialog dialog("Save As...");
+    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
+    dialog.add_filter(filter);
+    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::Stock::SAVE_AS, Gtk::RESPONSE_ACCEPT);
+
+    if (dialog.run() == Gtk::RESPONSE_ACCEPT)
+    {
+        drawing_area_.draw_to_image_surface()->write_to_png(dialog.get_filename());
     }
 }
 

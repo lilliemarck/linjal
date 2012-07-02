@@ -23,6 +23,7 @@ public:
     void set_image_visible(bool visible);
     void move_shape_up();
     void move_shape_down();
+    Cairo::RefPtr<Cairo::ImageSurface> draw_to_image_surface();
 
 private:
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);
