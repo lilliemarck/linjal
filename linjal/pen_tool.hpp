@@ -12,11 +12,11 @@ class pen_tool : public tool
 {
 public:
     pen_tool(linjal::drawing_area* drawing_area);
-    virtual void on_delete();
-    virtual void on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);
-    virtual void on_button_press_event(pointer_event const& event);
-    virtual void on_button_release_event(pointer_event const& event);
-    virtual void on_motion_notify_event(pointer_event const& event);
+    void on_delete() override;
+    void on_draw(Cairo::RefPtr<Cairo::Context> const& cairo) override;
+    void on_button_press_event(pointer_event const& event) override;
+    void on_button_release_event(pointer_event const& event) override;
+    void on_motion_notify_event(pointer_event const& event) override;
 
 private:
     enum class state

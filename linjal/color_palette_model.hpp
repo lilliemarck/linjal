@@ -27,22 +27,22 @@ public:
 private:
     color_palette_model(model& model);
 
-    virtual Gtk::TreeModelFlags get_flags_vfunc() const;
-    virtual int get_n_columns_vfunc() const;
-    virtual GType get_column_type_vfunc(int index) const;
-    virtual bool iter_next_vfunc(iterator const& iter, iterator& iter_next) const;
-    virtual bool get_iter_vfunc(Path const& path, iterator& iter) const;
-    virtual bool iter_children_vfunc(iterator const& parent, iterator& iter) const;
-    virtual bool iter_parent_vfunc(iterator const& child, iterator& iter) const;
-    virtual bool iter_nth_child_vfunc(iterator const& parent, int n, iterator& iter) const;
-    virtual bool iter_nth_root_child_vfunc(int n, iterator& iter) const;
-    virtual bool iter_has_child_vfunc(iterator const& iter) const;
-    virtual int iter_n_children_vfunc(iterator const& iter) const;
-    virtual int iter_n_root_children_vfunc() const;
-    virtual void ref_node_vfunc(iterator const& iter) const;
-    virtual void unref_node_vfunc(iterator const& iter) const;
-    virtual Path get_path_vfunc(iterator const& iter) const;
-    virtual void get_value_vfunc(iterator const& iter, int column, Glib::ValueBase& value) const;
+    Gtk::TreeModelFlags get_flags_vfunc() const override;
+    int get_n_columns_vfunc() const override;
+    GType get_column_type_vfunc(int index) const override;
+    bool iter_next_vfunc(iterator const& iter, iterator& iter_next) const override;
+    bool get_iter_vfunc(Path const& path, iterator& iter) const override;
+    bool iter_children_vfunc(iterator const& parent, iterator& iter) const override;
+    bool iter_parent_vfunc(iterator const& child, iterator& iter) const override;
+    bool iter_nth_child_vfunc(iterator const& parent, int n, iterator& iter) const override;
+    bool iter_nth_root_child_vfunc(int n, iterator& iter) const override;
+    bool iter_has_child_vfunc(iterator const& iter) const override;
+    int iter_n_children_vfunc(iterator const& iter) const override;
+    int iter_n_root_children_vfunc() const override;
+    void ref_node_vfunc(iterator const& iter) const override;
+    void unref_node_vfunc(iterator const& iter) const override;
+    Path get_path_vfunc(iterator const& iter) const override;
+    void get_value_vfunc(iterator const& iter, int column, Glib::ValueBase& value) const override;
 
     void on_color_inserted(size_t index);
     void on_color_deleted(size_t index);

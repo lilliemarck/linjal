@@ -26,11 +26,11 @@ public:
     Cairo::RefPtr<Cairo::ImageSurface> draw_to_image_surface();
 
 private:
-    bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo);
-    bool on_button_press_event(GdkEventButton* event);
-    bool on_button_release_event(GdkEventButton* event);
-    bool on_motion_notify_event(GdkEventMotion* event);
-    bool on_scroll_event(GdkEventScroll* event);
+    bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo) override;
+    bool on_button_press_event(GdkEventButton* event) override;
+    bool on_button_release_event(GdkEventButton* event) override;
+    bool on_motion_notify_event(GdkEventMotion* event) override;
+    bool on_scroll_event(GdkEventScroll* event) override;
     void on_shape_deleted(shape* shape);
     void draw_image(Cairo::RefPtr<Cairo::Context> const& cairo) const;
 

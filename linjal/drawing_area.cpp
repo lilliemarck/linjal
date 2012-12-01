@@ -11,7 +11,7 @@ drawing_area::drawing_area(model& model) :
     image_visible_(true)
 {
     use_pen_tool();
-    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
+    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
     model_.signal_shape_deleted().connect(sigc::mem_fun(this, &drawing_area::on_shape_deleted));
     model_.signal_color_changed().connect(sigc::mem_fun(this, &drawing_area::queue_draw));
 }
