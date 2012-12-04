@@ -1,6 +1,7 @@
 #ifndef LINJAL_MODEL_HPP
 #define LINJAL_MODEL_HPP
 
+#include <linjal/json.hpp>
 #include <sigc++/signal.h>
 #include <vector>
 #include "shape.hpp"
@@ -19,6 +20,7 @@ public:
     shape& new_shape();
     void delete_shape(shape& shape);
     size_t shape_count() const;
+    shape const& get_shape(std::size_t index) const;
     size_t index_of_shape(shape& shape);
     shape& replace_shape(shape& shape, size_t new_index);
     void delete_degenerate_shapes();
@@ -51,6 +53,12 @@ private:
     sigc::signal<void,size_t> color_inserted_;
     sigc::signal<void,size_t> color_deleted_;
     sigc::signal<void> color_changed_;
+};
+
+template <>
+struct json_converter<model>
+{
+    static json_spirit::Value to_json(model const& model);
 };
 
 } // namespace linjal

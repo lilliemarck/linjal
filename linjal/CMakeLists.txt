@@ -25,4 +25,4 @@ add_executable(linjal
     tool.cpp
     utils.cpp)
 
-target_link_libraries(linjal ${GTKMM_LIBRARIES})
+target_link_libraries(linjal json_spirit ${GTKMM_LIBRARIES})

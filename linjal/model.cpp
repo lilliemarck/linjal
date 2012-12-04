@@ -44,6 +44,11 @@ size_t model::shape_count() const
     return shapes_.size();
 }
 
+shape const& model::get_shape(std::size_t index) const
+{
+    return shapes_[index];
+}
+
 size_t model::index_of_shape(shape& shape)
 {
     return &shape - shapes_.data();
@@ -173,6 +178,49 @@ sigc::signal<void,size_t>& model::signal_color_deleted()
 sigc::signal<void>& model::signal_color_changed()
 {
     return color_changed_;
+}
+
+json_spirit::Value json_converter<model>::to_json(model const& model)
+{
+    json_spirit::Object model_object;
+    json_spirit::Array colors_array;
+
+    for (std::size_t i = 0; i < model.color_count(); ++i)
+    {
+        json_spirit::Object color_object;
+        color_object.emplace_back("name", model.get_color_name(i));
+        color const& color = model.get_color(i);
+        color_object.emplace_back("red", color.r);
+        color_object.emplace_back("green", color.g);
+        color_object.emplace_back("blue", color.b);
+        color_object.emplace_back("alpha", color.a);
+        colors_array.push_back(std::move(color_object));
+    }
+
+    model_object.emplace_back("colors", std::move(colors_array));
+    json_spirit::Array shapes_array;
+
+    for (std::size_t i = 0; i < model.shape_count(); ++i)
+    {
+        json_spirit::Object shape_object;
+        shape const& shape = model.get_shape(i);
+        shape_object.emplace_back("color", model.get_color_name(shape.color_index));
+        json_spirit::Array path_array;
+
+        for (auto const& node : shape.path)
+        {
+            path_array.push_back(node.position[0]);
+            path_array.push_back(node.position[1]);
+            path_array.push_back(node.control_point[0]);
+            path_array.push_back(node.control_point[1]);
+        }
+
+        shape_object.emplace_back("path", std::move(path_array));
+        shapes_array.push_back(std::move(shape_object));
+    }
+
+    model_object.emplace_back("shapes", std::move(shapes_array));
+    return model_object;
 }
 
 } // namespace linjal

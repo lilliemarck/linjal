@@ -5,6 +5,8 @@
 #include <gtkmm/radioaction.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
+#include <json_spirit_writer.h>
+#include <fstream>
 #include "color_palette_window.hpp"
 
 namespace linjal {
@@ -15,6 +17,7 @@ namespace
         "<ui>"
         "  <menubar name='menu-bar'>"
         "    <menu action='file-menu'>"
+        "      <menuitem action='save-as'/>"
         "      <menuitem action='open-image'/>"
         "      <menuitem action='export-to-png'/>"
         "      <menuitem action='quit'/>"
@@ -61,9 +64,11 @@ main_window::~main_window()
 void main_window::create_actions()
 {
     action_group_->add(Gtk::Action::create("file-menu", "_File"));
+    action_group_->add(Gtk::Action::create("save-as", Gtk::Stock::SAVE_AS),
+        sigc::mem_fun(this, &main_window::save_as));
     action_group_->add(Gtk::Action::create("open-image", Gtk::Stock::OPEN),
         sigc::mem_fun(this, &main_window::show_select_image_dialog));
-    action_group_->add(Gtk::Action::create("export-to-png", Gtk::Stock::SAVE_AS),
+    action_group_->add(Gtk::Action::create("export-to-png", "Export"),
         sigc::mem_fun(this, &main_window::show_export_dialog));
     action_group_->add(Gtk::Action::create("quit", Gtk::Stock::QUIT),
         sigc::ptr_fun(Gtk::Main::quit));
@@ -179,6 +184,26 @@ void main_window::show_about_dialog()
     dialog.set_website_label("Hosted on GitHub");
     dialog.set_authors(authors);
     dialog.run();
+}
+
+void main_window::save_as()
+{
+    Glib::RefPtr<Gtk::FileFilter> filter = Gtk::FileFilter::create();
+    filter->set_name("Linjal document");
+    filter->add_pattern("*.linjal");
+
+    Gtk::FileChooserDialog dialog("Save As...");
+    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
+    dialog.add_filter(filter);
+    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::Stock::SAVE_AS, Gtk::RESPONSE_ACCEPT);
+
+    if (dialog.run() == Gtk::RESPONSE_ACCEPT)
+    {
+        json_spirit::Value value = to_json(model_);
+        std::ofstream file(dialog.get_filename());
+        write(value, file, json_spirit::remove_trailing_zeros);
+    }
 }
 
 void main_window::show_select_image_dialog()
