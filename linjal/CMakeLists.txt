@@ -14,6 +14,7 @@ add_executable(linjal
     color_palette_widget.cpp
     color_palette_window.cpp
     drawing_area.cpp
+    json.cpp
     main.cpp
     main_window.cpp
     math.cpp

@@ -16,8 +16,6 @@ namespace
 
 model::model()
 {
-    colors_.push_back({"red", {255, 0, 0, 255}});
-    colors_.push_back({"green", {0, 255, 0, 255}});
 }
 
 shape& model::new_shape()
@@ -138,6 +136,19 @@ size_t model::color_count() const
     return colors_.size();
 }
 
+std::size_t model::index_of_color(std::string const& name) const
+{
+    for (std::size_t i = 0; i < colors_.size(); ++i)
+    {
+        if (colors_[i].name == name)
+        {
+            return i;
+        }
+    }
+
+    return std::numeric_limits<std::size_t>::max();
+}
+
 std::string model::get_color_name(size_t index) const
 {
     return colors_[index].name;
@@ -221,6 +232,58 @@ json_spirit::Value json_converter<model>::to_json(model const& model)
 
     model_object.emplace_back("shapes", std::move(shapes_array));
     return model_object;
+}
+
+model json_converter<model>::from_json(json_spirit::Value const& value)
+{
+    model model;
+    json_spirit::Object const& model_object = value.get_obj();
+
+    if (json_spirit::Array const* colors_array = get_array_ptr(model_object, "colors"))
+    {
+        for (auto const& color_value : *colors_array)
+        {
+            json_spirit::Object const& color_object = color_value.get_obj();
+
+            std::string name = get_string(color_object, "name");
+            color color =
+            {
+                get_uint8_t(color_object, "red"),
+                get_uint8_t(color_object, "green"),
+                get_uint8_t(color_object, "blue"),
+                get_uint8_t(color_object, "alpha")
+            };
+
+            size_t color_index = model.new_color();
+            model.set_color_name(color_index, name);
+            model.set_color(color_index, color);
+        }
+    }
+
+    if (json_spirit::Array const *shapes_array = get_array_ptr(model_object, "shapes"))
+    {
+        for (auto const& shape_value : *shapes_array)
+        {
+            json_spirit::Object const& shape_object = shape_value.get_obj();
+            shape& shape = model.new_shape();
+            shape.color_index = model.index_of_color(get_string(shape_object, "color"));
+            json_spirit::Array const& path_array = get_array(shape_object, "path");
+
+            for (std::size_t i = 0; i < path_array.size();)
+            {
+                node node;
+
+                node.position[0] = path_array.at(i++).get_real();
+                node.position[1] = path_array.at(i++).get_real();
+                node.control_point[0] = path_array.at(i++).get_real();
+                node.control_point[1] = path_array.at(i++).get_real();
+
+                shape.path.push_back(node);
+            }
+        }
+    }
+
+    return model;
 }
 
 } // namespace linjal

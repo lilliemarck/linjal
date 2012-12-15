@@ -5,6 +5,7 @@
 #include <gtkmm/radioaction.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
+#include <json_spirit_reader.h>
 #include <json_spirit_writer.h>
 #include <fstream>
 #include "color_palette_window.hpp"
@@ -17,6 +18,7 @@ namespace
         "<ui>"
         "  <menubar name='menu-bar'>"
         "    <menu action='file-menu'>"
+        "      <menuitem action='open'/>"
         "      <menuitem action='save-as'/>"
         "      <menuitem action='open-image'/>"
         "      <menuitem action='export-to-png'/>"
@@ -40,6 +42,24 @@ namespace
         "    <toolitem action='color'/>"
         "  </toolbar>"
         "</ui>";
+
+    Glib::RefPtr<Gtk::FileFilter> make_linjal_file_filter()
+    {
+        auto filter = Gtk::FileFilter::create();
+        filter->set_name("Linjal document");
+        filter->add_pattern("*.linjal");
+        return filter;
+    }
+
+    void create_default_colors(model &model)
+    {
+        std::size_t colod_index = model.new_color();
+        model.set_color_name(colod_index, "red");
+        model.set_color(colod_index, {255, 0, 0, 255});
+        colod_index = model.new_color();
+        model.set_color_name(colod_index, "green");
+        model.set_color(colod_index, {0, 255, 0, 255});
+    }
 }
 
 main_window::main_window() :
@@ -47,6 +67,8 @@ main_window::main_window() :
     action_group_(Gtk::ActionGroup::create()),
     drawing_area_(model_)
 {
+    create_default_colors(model_);
+
     set_title("Linjal");
     set_default_size(640, 400);
     set_position(Gtk::WIN_POS_CENTER);
@@ -64,6 +86,8 @@ main_window::~main_window()
 void main_window::create_actions()
 {
     action_group_->add(Gtk::Action::create("file-menu", "_File"));
+    action_group_->add(Gtk::Action::create("open", Gtk::Stock::OPEN),
+        sigc::mem_fun(this, &main_window::open));
     action_group_->add(Gtk::Action::create("save-as", Gtk::Stock::SAVE_AS),
         sigc::mem_fun(this, &main_window::save_as));
     action_group_->add(Gtk::Action::create("open-image", Gtk::Stock::OPEN),
@@ -186,15 +210,33 @@ void main_window::show_about_dialog()
     dialog.run();
 }
 
+void main_window::open()
+{
+    Gtk::FileChooserDialog dialog("Open Linjal Document...");
+    dialog.add_filter(make_linjal_file_filter());
+    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_ACCEPT);
+
+    if (dialog.run() == Gtk::RESPONSE_ACCEPT)
+    {
+        try
+        {
+            std::ifstream file(dialog.get_filename());
+            json_spirit::Value value;
+            read(file, value);
+            model_ = from_json<model>(value);
+        }
+        catch (...)
+        {
+        }
+    }
+}
+
 void main_window::save_as()
 {
-    Glib::RefPtr<Gtk::FileFilter> filter = Gtk::FileFilter::create();
-    filter->set_name("Linjal document");
-    filter->add_pattern("*.linjal");
-
     Gtk::FileChooserDialog dialog("Save As...");
     dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
-    dialog.add_filter(filter);
+    dialog.add_filter(make_linjal_file_filter());
     dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::Stock::SAVE_AS, Gtk::RESPONSE_ACCEPT);
 

@@ -30,6 +30,7 @@ public:
     size_t new_color();
     void delete_color(size_t index);
     size_t color_count() const;
+    std::size_t index_of_color(std::string const& name) const;
     std::string get_color_name(size_t index) const;
     void set_color_name(size_t index, std::string const& name);
     color get_color(size_t index) const;
@@ -59,6 +60,7 @@ template <>
 struct json_converter<model>
 {
     static json_spirit::Value to_json(model const& model);
+    static model from_json(json_spirit::Value const& value);
 };
 
 } // namespace linjal
