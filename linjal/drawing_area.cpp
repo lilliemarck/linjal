@@ -156,12 +156,12 @@ bool drawing_area::on_button_release_event(GdkEventButton* event)
 
 bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
 {
-    cml::vector2f event_position = {float(event->x), float(event->y)};
+    math::vector2f event_position = {float(event->x), float(event->y)};
 
     if (panning_)
     {
         auto offset = camera_.to_model_scale(event_position);
-        camera_.set_position(grab_position_ - offset);
+        camera_.set_position(math::vector2i(grab_position_ - offset));
     }
     else
     {
@@ -180,7 +180,7 @@ bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
 
 bool drawing_area::on_scroll_event(GdkEventScroll* event)
 {
-    cml::vector2f screen_position = {float(event->x), float(event->y)};
+    math::vector2f screen_position = {float(event->x), float(event->y)};
 
     if (event->direction == GDK_SCROLL_UP)
     {
@@ -214,7 +214,7 @@ void drawing_area::draw_image(Cairo::RefPtr<Cairo::Context> const& cairo) const
 
     image_pattern_->set_matrix(Cairo::Matrix(inv_zoom, 0.0,
                                              0.0, inv_zoom,
-                                             position[0], position[1]));
+                                             position.x(), position.y()));
 
     cairo->set_source(image_pattern_);
     cairo->paint();

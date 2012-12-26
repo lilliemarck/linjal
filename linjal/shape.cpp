@@ -1,7 +1,7 @@
 #include "shape.hpp"
+#include <math/math.hpp>
 #include <limits>
 #include "camera.hpp"
-#include "math.hpp"
 #include "utils.hpp"
 
 namespace linjal {
@@ -11,9 +11,9 @@ namespace
     /**
      * Return the nearest point on the line segment.
      */
-    cml::vector2f nearest_point_on_line(cml::vector2f const& begin,
-                                        cml::vector2f const& end,
-                                        cml::vector2f const& point)
+    math::vector2f nearest_point_on_line(math::vector2f const& begin,
+                                         math::vector2f const& end,
+                                         math::vector2f const& point)
     {
         auto b2e = end - begin;
         auto b2p = point -  begin;
@@ -44,9 +44,9 @@ namespace
     /**
      * Return the distance to a line segment.
      */
-    float distance_to_line(cml::vector2f const& begin,
-                           cml::vector2f const& end,
-                           cml::vector2f const& point)
+    float distance_to_line(math::vector2f const& begin,
+                           math::vector2f const& end,
+                           math::vector2f const& point)
     {
         return distance(point, nearest_point_on_line(begin, end, point));
     }
@@ -54,7 +54,7 @@ namespace
     /**
      * Return an iterator to the best place to insert point.
      */
-    path::iterator insertion_iterator(path& path, cml::vector2f const& point)
+    path::iterator insertion_iterator(path& path, math::vector2f const& point)
     {
         float distance = std::numeric_limits<float>::max();
         path::iterator iterator;
@@ -87,7 +87,7 @@ namespace
     }
 }
 
-path::iterator insert_point(path& path, cml::vector2f const& point)
+path::iterator insert_point(path& path, math::vector2f const& point)
 {
     if (path.size() < 3)
     {
@@ -108,14 +108,14 @@ void erase_points(path& path, std::set<size_t> const& indices)
     }
 }
 
-point_ref nearest_point(path& path, cml::vector2f const& point, float& distance)
+point_ref nearest_point(path& path, math::vector2f const& point, float& distance)
 {
     point_ref nearest_ref;
     float nearest_distance = std::numeric_limits<float>::max();
 
     for (auto iter = begin(path); iter != end(path); ++iter)
     {
-        auto temp = linjal::distance(point, iter->control_point);
+        auto temp = math::distance(point, iter->control_point);
         if (temp < nearest_distance)
         {
             nearest_distance = temp;
@@ -123,7 +123,7 @@ point_ref nearest_point(path& path, cml::vector2f const& point, float& distance)
             distance = temp;
         }
 
-        temp = linjal::distance(point, iter->position);
+        temp = math::distance(point, iter->position);
         if (temp < nearest_distance)
         {
             nearest_distance = temp;

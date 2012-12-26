@@ -85,7 +85,7 @@ void model::delete_degenerate_shapes()
     }
 }
 
-shape* model::pick(cml::vector2f const& position)
+shape* model::pick(math::vector2f const& position)
 {
     auto cairo = create_null_cairo_context();
     camera no_transform;
@@ -95,7 +95,7 @@ shape* model::pick(cml::vector2f const& position)
     {
         path_curve(shape.path, cairo, no_transform);
 
-        if (cairo->in_fill(position[0], position[1]))
+        if (cairo->in_fill(position.x(), position.y()))
         {
             picked_shape = &shape;
         }
@@ -220,10 +220,10 @@ json_spirit::Value json_converter<model>::to_json(model const& model)
 
         for (auto const& node : shape.path)
         {
-            path_array.push_back(node.position[0]);
-            path_array.push_back(node.position[1]);
-            path_array.push_back(node.control_point[0]);
-            path_array.push_back(node.control_point[1]);
+            path_array.push_back(node.position.x());
+            path_array.push_back(node.position.y());
+            path_array.push_back(node.control_point.x());
+            path_array.push_back(node.control_point.y());
         }
 
         shape_object.emplace_back("path", std::move(path_array));
@@ -273,10 +273,10 @@ model json_converter<model>::from_json(json_spirit::Value const& value)
             {
                 node node;
 
-                node.position[0] = path_array.at(i++).get_real();
-                node.position[1] = path_array.at(i++).get_real();
-                node.control_point[0] = path_array.at(i++).get_real();
-                node.control_point[1] = path_array.at(i++).get_real();
+                node.position.x() = path_array.at(i++).get_real();
+                node.position.y() = path_array.at(i++).get_real();
+                node.control_point.x() = path_array.at(i++).get_real();
+                node.control_point.y() = path_array.at(i++).get_real();
 
                 shape.path.push_back(node);
             }

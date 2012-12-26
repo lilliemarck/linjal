@@ -1,7 +1,7 @@
 #ifndef LINJAL_POINT_REF_HPP
 #define LINJAL_POINT_REF_HPP
 
-#include <cml/cml.h>
+#include <math/vector.hpp>
 
 namespace linjal {
 

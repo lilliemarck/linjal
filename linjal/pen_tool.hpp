@@ -1,7 +1,7 @@
 #ifndef LINJAL_PEN_TOOL_HPP
 #define LINJAL_PEN_TOOL_HPP
 
-#include <cml/cml.h>
+#include <math/vector.hpp>
 #include <set>
 #include "shape.hpp"
 #include "tool.hpp"
@@ -29,7 +29,7 @@ private:
     point_ref highlight_;
     std::set<size_t> selection_;
     state state_;
-    cml::vector2f drag_origin_;
+    math::vector2f drag_origin_;
 };
 
 } // namespace linjal

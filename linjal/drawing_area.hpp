@@ -39,7 +39,7 @@ private:
     camera camera_;
     std::unique_ptr<tool> tool_;
     bool panning_;
-    cml::vector2f grab_position_;
+    math::vector2f grab_position_;
     Cairo::RefPtr<Cairo::SurfacePattern> image_pattern_;
     bool image_visible_;
 

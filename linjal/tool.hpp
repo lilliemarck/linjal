@@ -1,7 +1,7 @@
 #ifndef LINJAL_TOOL_HPP
 #define LINJAL_TOOL_HPP
 
-#include <cml/cml.h>
+#include <math/vector.hpp>
 #include <gdkmm.h>
 
 namespace linjal {
@@ -11,7 +11,7 @@ class model;
 
 struct pointer_event
 {
-    cml::vector2f model_position;
+    math::vector2f model_position;
     guint state;
 };
 

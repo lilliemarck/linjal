@@ -1,6 +1,5 @@
 #include "pen_tool.hpp"
 #include "drawing_area.hpp"
-#include "math.hpp"
 #include "utils.hpp"
 
 namespace linjal {
@@ -27,10 +26,10 @@ namespace
         return std::distance(container.begin(), iter);
     }
 
-    cml::vector2f snap_position(float grid_size, cml::vector2f const& position)
+    math::vector2f snap_position(float grid_size, math::vector2f const& position)
     {
-        return {grid_size * std::round(position[0] / grid_size),
-                grid_size * std::round(position[1] / grid_size)};
+        return {grid_size * std::round(position.x() / grid_size),
+                grid_size * std::round(position.y() / grid_size)};
     }
 } // namespace
 
@@ -90,7 +89,7 @@ void pen_tool::on_button_press_event(pointer_event const& event)
         return;
     }
 
-    cml::vector2f snapped = snap_position(0.5f, event.model_position);
+    math::vector2f snapped = snap_position(0.5f, event.model_position);
 
     switch (highlight_.type())
     {
@@ -145,7 +144,7 @@ void pen_tool::on_motion_notify_event(pointer_event const& event)
     }
 
     path& path = drawing_area_->shape_->path;
-    cml::vector2f snapped = snap_position(0.5f, event.model_position);
+    math::vector2f snapped = snap_position(0.5f, event.model_position);
 
     switch (state_)
     {
@@ -174,7 +173,7 @@ void pen_tool::on_motion_notify_event(pointer_event const& event)
 
         case state::drag_selection:
         {
-            cml::vector2f move = snapped - drag_origin_;
+            math::vector2f move = snapped - drag_origin_;
             for (size_t index : selection_)
             {
                 path[index].position += move;
