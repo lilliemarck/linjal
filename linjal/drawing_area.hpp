@@ -18,7 +18,7 @@ public:
     drawing_area(model &model);
     shape* selected_shape();
     void set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image);
-    Cairo::RefPtr<Cairo::ImageSurface> draw_to_image_surface();
+    QImage draw_to_image();
 
 public Q_SLOTS:
     void new_shape();

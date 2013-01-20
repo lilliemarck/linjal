@@ -225,22 +225,12 @@ void main_window::show_select_image_dialog()
 
 void main_window::show_export_dialog()
 {
-#if 0
-    Glib::RefPtr<Gtk::FileFilter> filter = Gtk::FileFilter::create();
-    filter->set_name("PNG image");
-    filter->add_pattern("*.png");
+    QString filename = QFileDialog::getSaveFileName(this, tr("Export Image..."), QString(), tr("PNG Image (*.png)"));
 
-    Gtk::FileChooserDialog dialog("Save As...");
-    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
-    dialog.add_filter(filter);
-    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::Stock::SAVE_AS, Gtk::RESPONSE_ACCEPT);
-
-    if (dialog.run() == Gtk::RESPONSE_ACCEPT)
+    if (!filename.isEmpty())
     {
-        drawing_area_.draw_to_image_surface()->write_to_png(dialog.get_filename());
+        drawing_area_.draw_to_image().save(filename, "PNG");
     }
-#endif
 }
 
 } // namespace linjal

@@ -87,16 +87,16 @@ void drawing_area::move_shape_down()
     }
 }
 
-Cairo::RefPtr<Cairo::ImageSurface> drawing_area::draw_to_image_surface()
+QImage drawing_area::draw_to_image()
 {
-    auto image = Cairo::ImageSurface::create(Cairo::Format::FORMAT_RGB24, width(), height());
-    auto cairo = Cairo::Context::create(image);
+    QImage image(width(), height(), QImage::Format_RGB32);
+    image.fill(Qt::black);
 
-#if 0
-    cairo->set_source_rgb(1.0, 1.0, 1.0);
-    cairo->paint();
-    model_.draw(cairo, camera_);
-#endif
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    drawing_context context(painter);
+    model_.draw(context, camera_);
 
     return image;
 }
