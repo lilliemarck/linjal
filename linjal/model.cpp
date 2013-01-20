@@ -1,6 +1,6 @@
 #include "model.hpp"
+#include <QImage>
 #include <QPainter>
-#include <QPixmap>
 #include "camera.hpp"
 #include "shape.hpp"
 
@@ -53,8 +53,8 @@ shape& model::replace_shape(shape& shape, size_t new_index)
 
 void model::delete_degenerate_shapes()
 {
-    QPixmap pixmap(0, 0);
-    QPainter painter(&pixmap);
+    QImage image(0, 0, QImage::Format_RGB32);
+    QPainter painter(&image);
     drawing_context context(painter);
     camera no_transform;
 
@@ -80,8 +80,8 @@ void model::delete_degenerate_shapes()
 
 shape* model::pick(math::vector2f const& position)
 {
-    QPixmap pixmap(0, 0);
-    QPainter painter(&pixmap);
+    QImage image(0, 0, QImage::Format_RGB32);
+    QPainter painter(&image);
     drawing_context context(painter);
     camera no_transform;
     shape* picked_shape = nullptr;
