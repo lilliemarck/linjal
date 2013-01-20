@@ -25,7 +25,7 @@ public:
     drawing_context(QPainter& painter);
 
     void move_to(math::vector2f const& point);
-    void curve_to(math::vector2f const& p1, math::vector2f const& p2, math::vector2f const& p3);
+    void curve_to(math::vector2f const& control_point, math::vector2f const& point);
     void circle(math::vector2f const& center, float radius);
     void set_color(color const& color);
     void fill();

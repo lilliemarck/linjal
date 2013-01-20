@@ -142,17 +142,14 @@ void path_curve(path const& path, drawing_context& context, camera const& camera
         return;
     }
 
-    const float k = 0.551784f;
     context.move_to(camera.to_screen_space(path.front().position));
 
     for (path::const_iterator iter = begin(path); iter != end(path); ++iter)
     {
         auto const& node = *iter;
         auto const& next = *wraparound_next(path, iter);
-        auto b = lerp(node.position, node.control_point, k);
-        auto c = lerp(next.position, node.control_point, k);
-        context.curve_to(camera.to_screen_space(b),
-                         camera.to_screen_space(c),
+
+        context.curve_to(camera.to_screen_space(node.control_point),
                          camera.to_screen_space(next.position));
     }
 }
