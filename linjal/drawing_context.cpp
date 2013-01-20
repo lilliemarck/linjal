@@ -34,11 +34,7 @@ void drawing_context::curve_to(math::vector2f const& control_point, math::vector
 
 void drawing_context::circle(math::vector2f const& center, float radius)
 {
-    float x = center.x() - radius;
-    float y = center.y() - radius;
-    float diameter = 2.0f * radius;
-
-    path_.arcTo(x, y, diameter, diameter, 0.0, 360.0);
+    path_.addEllipse({center.x(), center.y()}, radius, radius);
 }
 
 void drawing_context::set_color(color const& color)
