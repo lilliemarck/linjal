@@ -179,17 +179,15 @@ void drawing_area::mouseMoveEvent(QMouseEvent* event)
     update();
 }
 
-#if 0
-
-bool drawing_area::on_scroll_event(GdkEventScroll* event)
+void drawing_area::wheelEvent(QWheelEvent* event)
 {
-    math::vector2f screen_position = {float(event->x), float(event->y)};
+    math::vector2f screen_position = {float(event->x()), float(event->y())};
 
-    if (event->direction == GDK_SCROLL_UP)
+    if (event->delta() > 0)
     {
         camera_.set_zoom(camera_.get_zoom() + 1, screen_position);
     }
-    else if (event->direction == GDK_SCROLL_DOWN)
+    else if (event->delta() < 0)
     {
         int zoom = camera_.get_zoom();
         if (zoom > 1)
@@ -198,11 +196,8 @@ bool drawing_area::on_scroll_event(GdkEventScroll* event)
         }
     }
 
-    queue_draw();
-    return true;
+    update();
 }
-
-#endif
 
 void drawing_area::on_shape_deleted(shape* shape)
 {

@@ -34,9 +34,7 @@ private:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
-#if 0
-    bool on_scroll_event(GdkEventScroll* event) override;
-#endif
+    void wheelEvent(QWheelEvent* event) override;
     void on_shape_deleted(shape* shape);
     void draw_image(Cairo::RefPtr<Cairo::Context> const& cairo) const;
 
