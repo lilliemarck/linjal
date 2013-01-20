@@ -1,10 +1,10 @@
-#include <gtkmm/main.h>
+#include <QApplication>
 #include "main_window.hpp"
 
 int main(int argc, char** argv)
 {
-    Gtk::Main main(argc, argv);
+    QApplication app(argc, argv);
     linjal::main_window window;
-    main.run(window);
-    return 0;
+    window.show();
+    return app.exec();
 }

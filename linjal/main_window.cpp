@@ -1,19 +1,13 @@
 #include "main_window.hpp"
-#include <gtkmm/aboutdialog.h>
-#include <gtkmm/filechooserdialog.h>
-#include <gtkmm/main.h>
-#include <gtkmm/radioaction.h>
-#include <gtkmm/stock.h>
-#include <gtkmm/toolbar.h>
 #include <json_spirit_reader.h>
 #include <json_spirit_writer.h>
 #include <fstream>
-#include "color_palette_window.hpp"
 
 namespace linjal {
 
 namespace
 {
+#if 0
     static const Glib::ustring ui_definition =
         "<ui>"
         "  <menubar name='menu-bar'>"
@@ -50,6 +44,7 @@ namespace
         filter->add_pattern("*.linjal");
         return filter;
     }
+#endif
 
     void create_default_colors(model &model)
     {
@@ -62,27 +57,31 @@ namespace
     }
 }
 
-main_window::main_window() :
+main_window::main_window()
+#if 0
     ui_manager_(Gtk::UIManager::create()),
     action_group_(Gtk::ActionGroup::create()),
     drawing_area_(model_)
+  #endif
 {
     create_default_colors(model_);
 
-    set_title("Linjal");
-    set_default_size(640, 400);
-    set_position(Gtk::WIN_POS_CENTER);
+    setWindowTitle("Linjal");
+    resize(640, 400);
 
+#if 0
     add(vbox_);
     create_actions();
     vbox_.pack_start(drawing_area_);
     show_all_children();
+#endif
 }
 
 main_window::~main_window()
 {
 }
 
+#if 0
 void main_window::create_actions()
 {
     action_group_->add(Gtk::Action::create("file-menu", "_File"));
@@ -284,5 +283,6 @@ void main_window::show_export_dialog()
         drawing_area_.draw_to_image_surface()->write_to_png(dialog.get_filename());
     }
 }
+#endif
 
 } // namespace linjal

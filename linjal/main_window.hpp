@@ -1,16 +1,13 @@
 #pragma once
 
-#include <gtkmm/uimanager.h>
-#include <gtkmm/box.h>
-#include <gtkmm/radioaction.h>
-#include <gtkmm/window.h>
-#include "drawing_area.hpp"
+#include <QMainWindow>
+#include "model.hpp"
 
 namespace linjal {
 
 class color_palette_window;
 
-class main_window : public Gtk::Window
+class main_window : public QMainWindow
 {
 public:
     main_window();
@@ -28,6 +25,7 @@ private:
     void show_export_dialog();
 
     model model_;
+#if 0
     Glib::RefPtr<Gtk::UIManager> ui_manager_;
     Glib::RefPtr<Gtk::ToggleAction> show_image_action_;
     Glib::RefPtr<Gtk::ActionGroup> action_group_;
@@ -38,6 +36,7 @@ private:
 
     std::unique_ptr<color_palette_window> color_palette_window_;
     std::unique_ptr<color_palette_window> color_palette_dialog_;
+#endif
 };
 
 } // namespace linjal

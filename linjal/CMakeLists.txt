@@ -1,27 +1,25 @@
+find_package(Qt4 REQUIRED QtCore QtGui QtOpenGl)
 find_package(PkgConfig)
-pkg_check_modules(GTKMM gtkmm-3.0)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=extra-semi -Wno-error=mismatched-tags")
+pkg_check_modules(SIGC sigc++-2.0)
+pkg_check_modules(CAIROMM cairomm-1.0)
+
+include(${QT_USE_FILE})
+add_definitions(-DQT_NO_KEYWORDS)
 
 include_directories(${CMAKE_SOURCE_DIR}/math/include)
-include_directories(${GTKMM_INCLUDE_DIRS})
+include_directories(${CAIROMM_INCLUDE_DIRS})
+include_directories(${SIGC_INCLUDE_DIRS})
+include_directories(${QT_DEFINITIONS})
 
 add_executable(linjal
     camera.cpp
-    color_cell_renderer.cpp
-    color_palette_model.cpp
-    color_palette_widget.cpp
-    color_palette_window.cpp
-    drawing_area.cpp
     json.cpp
     main.cpp
     main_window.cpp
     model.cpp
-    pen_tool.cpp
     point_ref.cpp
-    select_tool.cpp
     shape.cpp
-    tool.cpp
     utils.cpp)
 
-target_link_libraries(linjal json_spirit ${GTKMM_LIBRARIES})
+target_link_libraries(linjal json_spirit ${CAIROMM_LIBRARIES} ${SIGC_LIBRARIES} ${QT_LIBRARIES})
