@@ -104,6 +104,7 @@ Cairo::RefPtr<Cairo::ImageSurface> drawing_area::draw_to_image_surface()
 void drawing_area::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
     drawing_context context(painter);
 
 #if 0
