@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cairomm/cairomm.h>
 #include <QWidget>
 #include <memory>
 #include "camera.hpp"
@@ -29,8 +30,8 @@ public Q_SLOTS:
     void move_shape_down();
 
 private:
+    void paintEvent(QPaintEvent* event) override;
 #if 0
-    bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo) override;
     bool on_button_press_event(GdkEventButton* event) override;
     bool on_button_release_event(GdkEventButton* event) override;
     bool on_motion_notify_event(GdkEventMotion* event) override;

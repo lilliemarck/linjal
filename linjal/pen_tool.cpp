@@ -1,6 +1,5 @@
 #include "pen_tool.hpp"
 #include "drawing_area.hpp"
-#include "utils.hpp"
 
 namespace linjal {
 
@@ -52,7 +51,7 @@ void pen_tool::on_delete()
     state_ = state::idle;
 }
 
-void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
+void pen_tool::on_draw(drawing_context& context)
 {
     if (!drawing_area_->shape_)
     {
@@ -67,18 +66,18 @@ void pen_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
     {
         if (selection_.find(i) != end(selection_))
         {
-            cairo->set_source_rgb(1.0, 0.0, 0.0);
+            context.set_color({255, 0, 0, 255});
         }
         else
         {
-            cairo->set_source_rgb(0.0, 0.0, 0.0);
+            context.set_color({0, 0, 0, 255});
         }
 
-        cairo_cirlce(cairo, camera.to_screen_space(path[i].position), 2.0f);
-        cairo->fill();
-        cairo->set_source_rgb(0.0, 0.0, 0.0);
-        cairo_cirlce(cairo, camera.to_screen_space(path[i].control_point), 1.0f);
-        cairo->fill();
+        context.circle(camera.to_screen_space(path[i].position), 2.0f);
+        context.fill();
+        context.set_color({0, 0, 0, 255});
+        context.circle(camera.to_screen_space(path[i].control_point), 1.0f);
+        context.fill();
     }
 }
 

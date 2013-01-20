@@ -1,4 +1,6 @@
 #include "drawing_area.hpp"
+#include <QPainter>
+#include "drawing_context.hpp"
 #include "pen_tool.hpp"
 #include "select_tool.hpp"
 
@@ -88,29 +90,32 @@ Cairo::RefPtr<Cairo::ImageSurface> drawing_area::draw_to_image_surface()
     auto image = Cairo::ImageSurface::create(Cairo::Format::FORMAT_RGB24, width(), height());
     auto cairo = Cairo::Context::create(image);
 
+#if 0
     cairo->set_source_rgb(1.0, 1.0, 1.0);
     cairo->paint();
     model_.draw(cairo, camera_);
+#endif
 
     return image;
 }
 
-#if 0
-
-bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
+void drawing_area::paintEvent(QPaintEvent* event)
 {
-    cairo->set_source_rgb(1.0, 1.0, 1.0);
-    cairo->paint();
+    QPainter painter(this);
+    drawing_context context(painter);
 
+#if 0
     if (image_pattern_ && image_visible_)
     {
         draw_image(cairo);
     }
+#endif
 
-    model_.draw(cairo, camera_);
-    tool_->on_draw(cairo);
-    return true;
+    model_.draw(context, camera_);
+    tool_->on_draw(context);
 }
+
+#if 0
 
 bool drawing_area::on_button_press_event(GdkEventButton* event)
 {

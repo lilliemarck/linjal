@@ -19,6 +19,7 @@ qt4_wrap_cpp(MOC_SOURCES
 add_executable(linjal
     camera.cpp
     drawing_area.cpp
+    drawing_context.cpp
     json.cpp
     main.cpp
     main_window.cpp
@@ -28,7 +29,6 @@ add_executable(linjal
     select_tool.cpp
     shape.cpp
     tool.cpp
-    utils.cpp
     ${MOC_SOURCES})
 
 target_link_libraries(linjal json_spirit ${CAIROMM_LIBRARIES} ${SIGC_LIBRARIES} ${QT_LIBRARIES})

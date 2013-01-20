@@ -1,6 +1,5 @@
 #include "select_tool.hpp"
 #include "drawing_area.hpp"
-#include "utils.hpp"
 
 namespace linjal {
 
@@ -16,15 +15,15 @@ void select_tool::on_delete()
     }
 }
 
-void select_tool::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
+void select_tool::on_draw(drawing_context& context)
 {
-    cairo->set_source_rgb(0.0, 0.0, 0.0);
+    context.set_color({0, 0, 0, 255});
     if (drawing_area_->shape_)
     {
         for (auto const& node : drawing_area_->shape_->path)
         {
-            cairo_cirlce(cairo, drawing_area_->camera_.to_screen_space(node.position), 2.0f);
-            cairo->fill();
+            context.circle(drawing_area_->camera_.to_screen_space(node.position), 2.0f);
+            context.fill();
         }
     }
 }

@@ -2,7 +2,7 @@
 #include <math/math.hpp>
 #include <limits>
 #include "camera.hpp"
-#include "utils.hpp"
+#include "drawing_context.hpp"
 
 namespace linjal {
 
@@ -135,7 +135,7 @@ point_ref nearest_point(path& path, math::vector2f const& point, float& distance
     return nearest_ref;
 }
 
-void path_curve(path const& path, Cairo::RefPtr<Cairo::Context> const& cairo, camera const& camera)
+void path_curve(path const& path, drawing_context& context, camera const& camera)
 {
     if (path.empty())
     {
@@ -143,7 +143,7 @@ void path_curve(path const& path, Cairo::RefPtr<Cairo::Context> const& cairo, ca
     }
 
     const float k = 0.551784f;
-    cairo_move_to(cairo, camera.to_screen_space(path.front().position));
+    context.move_to(camera.to_screen_space(path.front().position));
 
     for (path::const_iterator iter = begin(path); iter != end(path); ++iter)
     {
@@ -151,10 +151,9 @@ void path_curve(path const& path, Cairo::RefPtr<Cairo::Context> const& cairo, ca
         auto const& next = *wraparound_next(path, iter);
         auto b = lerp(node.position, node.control_point, k);
         auto c = lerp(next.position, node.control_point, k);
-        cairo_curve_to(cairo,
-                       camera.to_screen_space(b),
-                       camera.to_screen_space(c),
-                       camera.to_screen_space(next.position));
+        context.curve_to(camera.to_screen_space(b),
+                         camera.to_screen_space(c),
+                         camera.to_screen_space(next.position));
     }
 }
 

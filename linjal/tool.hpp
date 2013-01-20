@@ -1,12 +1,12 @@
 #pragma once
 
-#include <cairomm/cairomm.h>
 #include <math/vector.hpp>
 #include <Qt>
 
 namespace linjal {
 
 class drawing_area;
+class drawing_context;
 class model;
 
 struct pointer_event
@@ -22,7 +22,7 @@ public:
 
     virtual ~tool() {}
     virtual void on_delete() {}
-    virtual void on_draw(Cairo::RefPtr<Cairo::Context> const& cairo) {}
+    virtual void on_draw(drawing_context& context) {}
     virtual void on_button_press_event(pointer_event const& event) {}
     virtual void on_button_release_event(pointer_event const& event) {}
     virtual void on_motion_notify_event(pointer_event const& event) {}

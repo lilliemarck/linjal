@@ -3,14 +3,10 @@
 #include <linjal/json.hpp>
 #include <sigc++/signal.h>
 #include <vector>
+#include "drawing_context.hpp"
 #include "shape.hpp"
 
 namespace linjal {
-
-struct color
-{
-    uint8_t r, g, b, a;
-};
 
 class model
 {
@@ -24,7 +20,7 @@ public:
     shape& replace_shape(shape& shape, size_t new_index);
     void delete_degenerate_shapes();
     shape* pick(math::vector2f const& position);
-    void draw(Cairo::RefPtr<Cairo::Context> const& cairo, camera const& camera);
+    void draw(drawing_context& context, camera const& camera);
 
     size_t new_color();
     void delete_color(size_t index);

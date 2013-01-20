@@ -1,18 +1,10 @@
 #include "model.hpp"
+#include <QPainter>
+#include <QPixmap>
 #include "camera.hpp"
 #include "shape.hpp"
 
-#include <cairomm/cairomm.h>
-
 namespace linjal {
-
-namespace
-{
-    Cairo::RefPtr<Cairo::Context> create_null_cairo_context()
-    {
-        return Cairo::Context::create(Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 0, 0));
-    }
-} // namespace
 
 model::model()
 {
@@ -61,19 +53,20 @@ shape& model::replace_shape(shape& shape, size_t new_index)
 
 void model::delete_degenerate_shapes()
 {
-    auto cairo = create_null_cairo_context();
+    QPixmap pixmap(0, 0);
+    QPainter painter(&pixmap);
+    drawing_context context(painter);
     camera no_transform;
 
     for (auto iter = begin(shapes_); iter != end(shapes_);)
     {
         auto& shape = *iter;
-        path_curve(shape.path, cairo, no_transform);
+        path_curve(shape.path, context, no_transform);
 
-        double x1, y1, x2, y2;
-        cairo->get_fill_extents(x1, y1, x2, y2);
-        cairo->fill();
+        rect extents = context.get_fill_extents();
+        context.fill();
 
-        if (x1 == 0.0 && y1 == 0.0 && x2 == 0.0 && y2 == 0.0)
+        if (extents.size.x() == 0.0f && extents.size.y() == 0.0f)
         {
             iter = shapes_.erase(iter);
             shape_deleted_(&shape);
@@ -87,33 +80,34 @@ void model::delete_degenerate_shapes()
 
 shape* model::pick(math::vector2f const& position)
 {
-    auto cairo = create_null_cairo_context();
+    QPixmap pixmap(0, 0);
+    QPainter painter(&pixmap);
+    drawing_context context(painter);
     camera no_transform;
     shape* picked_shape = nullptr;
 
     for (auto& shape : shapes_)
     {
-        path_curve(shape.path, cairo, no_transform);
+        path_curve(shape.path, context, no_transform);
 
-        if (cairo->in_fill(position.x(), position.y()))
+        if (context.in_fill(position))
         {
             picked_shape = &shape;
         }
 
-        cairo->fill();
+        context.fill();
     };
 
     return picked_shape;
 }
 
-void model::draw(Cairo::RefPtr<Cairo::Context> const& cairo, camera const& camera)
+void model::draw(drawing_context& context, camera const& camera)
 {
     for (auto const& shape : shapes_)
     {
-        color const& color = colors_[shape.color_index].color;
-        cairo->set_source_rgb(color.r / 255.0, color.g / 255.0, color.b / 255.0);
-        path_curve(shape.path, cairo, camera);
-        cairo->fill();
+        context.set_color(colors_[shape.color_index].color);
+        path_curve(shape.path, context, camera);
+        context.fill();
     }
 }
 
