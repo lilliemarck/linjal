@@ -12,6 +12,9 @@ include_directories(${CAIROMM_INCLUDE_DIRS})
 include_directories(${SIGC_INCLUDE_DIRS})
 include_directories(${QT_DEFINITIONS})
 
+qt4_wrap_cpp(MOC_SOURCES
+    main_window.hpp)
+
 add_executable(linjal
     camera.cpp
     json.cpp
@@ -20,6 +23,7 @@ add_executable(linjal
     model.cpp
     point_ref.cpp
     shape.cpp
-    utils.cpp)
+    utils.cpp
+    ${MOC_SOURCES})
 
 target_link_libraries(linjal json_spirit ${CAIROMM_LIBRARIES} ${SIGC_LIBRARIES} ${QT_LIBRARIES})

@@ -2,41 +2,16 @@
 #include <json_spirit_reader.h>
 #include <json_spirit_writer.h>
 #include <fstream>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
+#include <QToolBar>
 
 namespace linjal {
 
 namespace
 {
 #if 0
-    static const Glib::ustring ui_definition =
-        "<ui>"
-        "  <menubar name='menu-bar'>"
-        "    <menu action='file-menu'>"
-        "      <menuitem action='open'/>"
-        "      <menuitem action='save-as'/>"
-        "      <menuitem action='open-image'/>"
-        "      <menuitem action='export-to-png'/>"
-        "      <menuitem action='quit'/>"
-        "    </menu>"
-        "    <menu action='edit-menu'>"
-        "      <menuitem action='delete'/>"
-        "      <menuitem action='show-image'/>"
-        "      <menuitem action='move-shape-up'/>"
-        "      <menuitem action='move-shape-down'/>"
-        "    </menu>"
-        "    <menu action='help_menu'>"
-        "      <menuitem action='about'/>"
-        "    </menu>"
-        "  </menubar>"
-        "  <toolbar name='toolbar'>"
-        "    <toolitem action='new-shape'/>"
-        "    <toolitem action='pen'/>"
-        "    <toolitem action='select'/>"
-        "    <toolitem action='palette'/>"
-        "    <toolitem action='color'/>"
-        "  </toolbar>"
-        "</ui>";
-
     Glib::RefPtr<Gtk::FileFilter> make_linjal_file_filter()
     {
         auto filter = Gtk::FileFilter::create();
@@ -59,19 +34,20 @@ namespace
 
 main_window::main_window()
 #if 0
-    ui_manager_(Gtk::UIManager::create()),
-    action_group_(Gtk::ActionGroup::create()),
     drawing_area_(model_)
-  #endif
+#endif
 {
     create_default_colors(model_);
 
     setWindowTitle("Linjal");
     resize(640, 400);
 
+    create_actions();
+    create_menus();
+    create_toolbar();
+
 #if 0
     add(vbox_);
-    create_actions();
     vbox_.pack_start(drawing_area_);
     show_all_children();
 #endif
@@ -81,100 +57,92 @@ main_window::~main_window()
 {
 }
 
-#if 0
 void main_window::create_actions()
 {
-    action_group_->add(Gtk::Action::create("file-menu", "_File"));
-    action_group_->add(Gtk::Action::create("open", Gtk::Stock::OPEN),
-        sigc::mem_fun(this, &main_window::open));
-    action_group_->add(Gtk::Action::create("save-as", Gtk::Stock::SAVE_AS),
-        sigc::mem_fun(this, &main_window::save_as));
-    action_group_->add(Gtk::Action::create("open-image", Gtk::Stock::OPEN),
-        sigc::mem_fun(this, &main_window::show_select_image_dialog));
-    action_group_->add(Gtk::Action::create("export-to-png", "Export"),
-        sigc::mem_fun(this, &main_window::show_export_dialog));
-    action_group_->add(Gtk::Action::create("quit", Gtk::Stock::QUIT),
-        sigc::ptr_fun(Gtk::Main::quit));
+    open_action_ = new QAction(tr("&Open..."), this);
+    open_action_->setShortcuts(QKeySequence::Open);
+    connect(open_action_, SIGNAL(triggered()), this, SLOT(open()));
 
-    action_group_->add(Gtk::Action::create("edit-menu", "_Edit"));
-    action_group_->add(Gtk::Action::create("delete", Gtk::Stock::DELETE),
-        Gtk::AccelKey("Delete"),
-        sigc::mem_fun(drawing_area_, &drawing_area::delete_selection));
+    save_as_action_ = new QAction(tr("Save &As..."), this);
+    save_as_action_->setShortcuts(QKeySequence::SaveAs);
+    connect(open_action_, SIGNAL(triggered()), this, SLOT(save_as()));
 
-    show_image_action_ = Gtk::ToggleAction::create("show-image", "Show Image", Glib::ustring(), true);
-    action_group_->add(show_image_action_, [=]()
-    {
-        drawing_area_.set_image_visible(show_image_action_->get_active());
-    });
+    open_image_action_ = new QAction(tr("Open Image..."), this);
+    connect(open_image_action_, SIGNAL(triggered()), this, SLOT(show_select_image_dialog()));
 
-    action_group_->add(Gtk::Action::create("move-shape-up", "Move Shape Up"),
-                       Gtk::AccelKey("Page_Up"),
-                       sigc::mem_fun(drawing_area_, &drawing_area::move_shape_up));
+    export_to_png_action_ = new QAction(tr("Export to PNG..."), this);
+    connect(export_to_png_action_, SIGNAL(triggered()), this, SLOT(show_export_dialog()));
 
-    action_group_->add(Gtk::Action::create("move-shape-down", "Move Shape Up"),
-                       Gtk::AccelKey("Page_Down"),
-                       sigc::mem_fun(drawing_area_, &drawing_area::move_shape_down));
+    quit_action_ = new QAction(tr("Quit"), this);
+    connect(quit_action_, SIGNAL(triggered()), this, SLOT(close()));
 
-    action_group_->add(Gtk::Action::create("help-menu", "_Help"));
-    action_group_->add(Gtk::Action::create("about", Gtk::Stock::ABOUT),
-          sigc::mem_fun(this, &main_window::show_about_dialog));
+    delete_action_ = new QAction(tr("&Delete"), this);
+    delete_action_->setShortcut(QKeySequence::Delete);
 
-    action_group_->add(Gtk::Action::create("new-shape", "New Shape"),
-                       sigc::mem_fun(drawing_area_, &drawing_area::new_shape));
-    action_group_->add(Gtk::Action::create("palette", "Palette"),
-                       sigc::mem_fun(this, &main_window::show_palette));
-    action_group_->add(Gtk::Action::create("color", "Color"),
-                       sigc::mem_fun(this, &main_window::show_color_chooser));
+    show_image_action_ = new QAction(tr("Show Image"), this);
 
-    Gtk::RadioAction::Group tool_group;
-    pen_tool_action_ = Gtk::RadioAction::create(tool_group, "pen", "Pen");
-    select_tool_action_ = Gtk::RadioAction::create(tool_group, "select", "Select");
+    move_shape_up_action_ = new QAction(tr("Move Shape Up"), this);
+    move_shape_up_action_->setShortcut(QKeySequence(tr("PgUp")));
 
-    action_group_->add(pen_tool_action_, [=]()
-    {
-        if (pen_tool_action_->get_active())
-        {
-            drawing_area_.use_pen_tool();
-        }
-    });
+    move_shape_down_action_ = new QAction(tr("Move Shape Down"), this);
+    move_shape_down_action_->setShortcut(QKeySequence(tr("PgDown")));
 
-    action_group_->add(select_tool_action_, [=]()
-    {
-        if (select_tool_action_->get_active())
-        {
-            drawing_area_.use_select_tool();
-        }
-    });
+    new_shape_action_ = new QAction(tr("New Shape"), this);
 
-    ui_manager_->insert_action_group(action_group_);
-    ui_manager_->add_ui_from_string(ui_definition);
+    pen_action_ = new QAction(tr("Pen"), this);
 
-    if (Gtk::Widget* menu_bar = ui_manager_->get_widget("/menu-bar"))
-    {
-        vbox_.pack_start(*menu_bar, Gtk::PACK_SHRINK);
-    }
+    select_action_ = new QAction(tr("Select"), this);
 
-    if (Gtk::Toolbar* toolbar = dynamic_cast<Gtk::Toolbar*>(ui_manager_->get_widget("/toolbar")))
-    {
-        toolbar->set_toolbar_style(Gtk::TOOLBAR_TEXT);
-        vbox_.pack_start(*toolbar, Gtk::PACK_SHRINK);
-    }
+    palette_action_ = new QAction(tr("Palette"), this);
+    connect(palette_action_, SIGNAL(triggered()), this, SLOT(show_palette()));
 
-    add_accel_group(ui_manager_->get_accel_group());
+    color_action_ = new QAction(tr("Color"), this);
+    connect(color_action_, SIGNAL(triggered()), this, SLOT(show_color_chooser()));
+}
+
+void main_window::create_menus()
+{
+    file_menu_ = menuBar()->addMenu(tr("&File"));
+    file_menu_->addAction(open_action_);
+    file_menu_->addAction(save_as_action_);
+    file_menu_->addAction(open_image_action_);
+    file_menu_->addAction(export_to_png_action_);
+    file_menu_->addSeparator();
+    file_menu_->addAction(quit_action_);
+
+    edit_menu_ = menuBar()->addMenu(tr("&Edit"));
+    edit_menu_->addAction(delete_action_);
+    edit_menu_->addAction(show_image_action_);
+    edit_menu_->addAction(move_shape_up_action_);
+    edit_menu_->addAction(move_shape_down_action_);
+}
+
+void main_window::create_toolbar()
+{
+    toolbar_ = addToolBar(tr("Tools"));
+    toolbar_->addAction(new_shape_action_);
+    toolbar_->addAction(pen_action_);
+    toolbar_->addAction(select_action_);
+    toolbar_->addSeparator();
+    toolbar_->addAction(palette_action_);
+    toolbar_->addAction(color_action_);
 }
 
 void main_window::show_palette()
 {
+#if 0
     if (!color_palette_window_)
     {
         color_palette_window_ = std::unique_ptr<color_palette_window>(new color_palette_window(model_));
     }
 
     color_palette_window_->present();
+#endif
 }
 
 void main_window::show_color_chooser()
 {
+#if 0
     if (!color_palette_dialog_)
     {
         color_palette_dialog_ = std::unique_ptr<color_palette_window>(new color_palette_window(model_));
@@ -183,7 +151,10 @@ void main_window::show_color_chooser()
     }
 
     color_palette_dialog_->present();
+#endif
 }
+
+#if 0
 
 void main_window::on_color_index_changed(size_t color_index)
 {
@@ -196,21 +167,11 @@ void main_window::on_color_index_changed(size_t color_index)
     }
 }
 
-void main_window::show_about_dialog()
-{
-    std::vector<Glib::ustring> authors{"Jonathan Lilliemarck"};
-
-    Gtk::AboutDialog dialog;
-    dialog.set_program_name("Linjal");
-    dialog.set_copyright("© 2012 Jonathan Lilliemarck");
-    dialog.set_website("https://github.com/lilliemarck/linjal");
-    dialog.set_website_label("Hosted on GitHub");
-    dialog.set_authors(authors);
-    dialog.run();
-}
+#endif
 
 void main_window::open()
 {
+#if 0
     Gtk::FileChooserDialog dialog("Open Linjal Document...");
     dialog.add_filter(make_linjal_file_filter());
     dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
@@ -229,10 +190,12 @@ void main_window::open()
         {
         }
     }
+#endif
 }
 
 void main_window::save_as()
 {
+#if 0
     Gtk::FileChooserDialog dialog("Save As...");
     dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
     dialog.add_filter(make_linjal_file_filter());
@@ -245,10 +208,12 @@ void main_window::save_as()
         std::ofstream file(dialog.get_filename());
         write(value, file, json_spirit::remove_trailing_zeros);
     }
+#endif
 }
 
 void main_window::show_select_image_dialog()
 {
+#if 0
     Gtk::FileChooserDialog dialog("Open File...");
     dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_ACCEPT);
@@ -264,10 +229,12 @@ void main_window::show_select_image_dialog()
         {
         }
     }
+#endif
 }
 
 void main_window::show_export_dialog()
 {
+#if 0
     Glib::RefPtr<Gtk::FileFilter> filter = Gtk::FileFilter::create();
     filter->set_name("PNG image");
     filter->add_pattern("*.png");
@@ -282,7 +249,7 @@ void main_window::show_export_dialog()
     {
         drawing_area_.draw_to_image_surface()->write_to_png(dialog.get_filename());
     }
-}
 #endif
+}
 
 } // namespace linjal
