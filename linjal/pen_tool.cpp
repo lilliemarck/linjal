@@ -100,13 +100,13 @@ void pen_tool::on_button_press_event(pointer_event const& event)
             highlight_.set_control_point(index);
             selection_.clear();
             state_ = state::drag_control_point;
-            drawing_area_->get_window()->set_cursor(Gdk::Cursor::create(Gdk::HAND2));
+            drawing_area_->setCursor(Qt::ClosedHandCursor);
             break;
         }
 
         case point_ref::position:
         {
-            if (event.state & Gdk::CONTROL_MASK)
+            if (event.modifiers & Qt::ControlModifier)
             {
                 toggle_selection(selection_, *highlight_);
             }
@@ -139,7 +139,7 @@ void pen_tool::on_motion_notify_event(pointer_event const& event)
 {
     if (!drawing_area_->shape_)
     {
-        drawing_area_->get_window()->set_cursor(Glib::RefPtr<Gdk::Cursor>());
+        drawing_area_->setCursor(Qt::ArrowCursor);
         return;
     }
 
@@ -157,16 +157,16 @@ void pen_tool::on_motion_notify_event(pointer_event const& event)
 
             if (highlight_.type() == point_ref::position && distance < 5.0)
             {
-                drawing_area_->get_window()->set_cursor(Gdk::Cursor::create(Gdk::HAND2));
+                drawing_area_->setCursor(Qt::ClosedHandCursor);
             }
             else if (highlight_.type() == point_ref::control_point && distance < 5.0)
             {
-                drawing_area_->get_window()->set_cursor(Gdk::Cursor::create(Gdk::CROSSHAIR));
+                drawing_area_->setCursor(Qt::CrossCursor);
             }
             else
             {
                 highlight_.clear();
-                drawing_area_->get_window()->set_cursor(Gdk::Cursor::create(Gdk::PENCIL));
+                drawing_area_->setCursor(Qt::UpArrowCursor);
             }
             break;
         }

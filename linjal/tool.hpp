@@ -1,7 +1,8 @@
 #pragma once
 
+#include <cairomm/cairomm.h>
 #include <math/vector.hpp>
-#include <gdkmm.h>
+#include <Qt>
 
 namespace linjal {
 
@@ -11,7 +12,7 @@ class model;
 struct pointer_event
 {
     math::vector2f model_position;
-    guint state;
+    Qt::KeyboardModifiers modifiers;
 };
 
 class tool

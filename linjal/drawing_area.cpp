@@ -4,16 +4,15 @@
 
 namespace linjal {
 
-drawing_area::drawing_area(model& model) :
-    model_(model),
-    shape_(nullptr),
-    panning_(false),
-    image_visible_(true)
+drawing_area::drawing_area(model& model)
+    : model_(model)
+    , shape_(nullptr)
+    , panning_(false)
+    , image_visible_(true)
 {
     use_pen_tool();
-    add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
     model_.signal_shape_deleted().connect(sigc::mem_fun(this, &drawing_area::on_shape_deleted));
-    model_.signal_color_changed().connect(sigc::mem_fun(this, &drawing_area::queue_draw));
+    model_.signal_color_changed().connect(sigc::mem_fun(this, static_cast<void(QWidget::*)()>(&QWidget::update)));
 }
 
 void drawing_area::new_shape()
@@ -39,7 +38,7 @@ void drawing_area::use_select_tool()
 void drawing_area::delete_selection()
 {
     tool_->on_delete();
-    queue_draw();
+    update();
 }
 
 shape* drawing_area::selected_shape()
@@ -67,7 +66,7 @@ void drawing_area::move_shape_up()
         {
             shape_ = &model_.replace_shape(*shape_, new_index);
         }
-        queue_draw();
+        update();
     }
 }
 
@@ -80,15 +79,13 @@ void drawing_area::move_shape_down()
         {
             shape_ = &model_.replace_shape(*shape_, new_index);
         }
-        queue_draw();
+        update();
     }
 }
 
 Cairo::RefPtr<Cairo::ImageSurface> drawing_area::draw_to_image_surface()
 {
-    auto width = get_width();
-    auto height = get_height();
-    auto image = Cairo::ImageSurface::create(Cairo::Format::FORMAT_RGB24, width, height);
+    auto image = Cairo::ImageSurface::create(Cairo::Format::FORMAT_RGB24, width(), height());
     auto cairo = Cairo::Context::create(image);
 
     cairo->set_source_rgb(1.0, 1.0, 1.0);
@@ -97,6 +94,8 @@ Cairo::RefPtr<Cairo::ImageSurface> drawing_area::draw_to_image_surface()
 
     return image;
 }
+
+#if 0
 
 bool drawing_area::on_draw(Cairo::RefPtr<Cairo::Context> const& cairo)
 {
@@ -198,6 +197,8 @@ bool drawing_area::on_scroll_event(GdkEventScroll* event)
     queue_draw();
     return true;
 }
+
+#endif
 
 void drawing_area::on_shape_deleted(shape* shape)
 {

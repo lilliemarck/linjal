@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include "drawing_area.hpp"
 #include "model.hpp"
 
 namespace linjal {
@@ -30,6 +31,7 @@ private:
     void on_color_index_changed(size_t color_index);
 
     model model_;
+    drawing_area drawing_area_;
 
     QAction* open_action_;
     QAction* save_as_action_;
@@ -52,7 +54,6 @@ private:
 
 #if 0
     Gtk::VBox vbox_;
-    drawing_area drawing_area_;
 
     std::unique_ptr<color_palette_window> color_palette_window_;
     std::unique_ptr<color_palette_window> color_palette_dialog_;

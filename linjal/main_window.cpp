@@ -32,15 +32,14 @@ namespace
     }
 }
 
-main_window::main_window()
-#if 0
-    drawing_area_(model_)
-#endif
+main_window::main_window() : drawing_area_(model_)
 {
     create_default_colors(model_);
 
     setWindowTitle("Linjal");
     resize(640, 400);
+
+    setCentralWidget(&drawing_area_);
 
     create_actions();
     create_menus();
@@ -78,20 +77,32 @@ void main_window::create_actions()
 
     delete_action_ = new QAction(tr("&Delete"), this);
     delete_action_->setShortcut(QKeySequence::Delete);
+    connect(delete_action_, SIGNAL(triggered()), &drawing_area_, SLOT(delete_selection()));
 
     show_image_action_ = new QAction(tr("Show Image"), this);
+    show_image_action_->setCheckable(true);
+    connect(show_image_action_, SIGNAL(toggled(bool)), &drawing_area_, SLOT(set_image_visible(bool)));
 
     move_shape_up_action_ = new QAction(tr("Move Shape Up"), this);
     move_shape_up_action_->setShortcut(QKeySequence(tr("PgUp")));
+    connect(move_shape_up_action_, SIGNAL(triggered()), &drawing_area_, SLOT(move_shape_up()));
 
     move_shape_down_action_ = new QAction(tr("Move Shape Down"), this);
     move_shape_down_action_->setShortcut(QKeySequence(tr("PgDown")));
+    connect(move_shape_down_action_, SIGNAL(triggered()), &drawing_area_, SLOT(move_shape_down()));
 
     new_shape_action_ = new QAction(tr("New Shape"), this);
+    connect(new_shape_action_, SIGNAL(triggered()), &drawing_area_, SLOT(new_shape()));
 
     pen_action_ = new QAction(tr("Pen"), this);
+    connect(pen_action_, SIGNAL(triggered()), &drawing_area_, SLOT(use_pen_tool()));
 
     select_action_ = new QAction(tr("Select"), this);
+    connect(select_action_, SIGNAL(triggered()), &drawing_area_, SLOT(use_select_tool()));
+
+    QActionGroup* tool_group = new QActionGroup(this);
+    tool_group->addAction(pen_action_);
+    tool_group->addAction(select_action_);
 
     palette_action_ = new QAction(tr("Palette"), this);
     connect(palette_action_, SIGNAL(triggered()), this, SLOT(show_palette()));

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gtkmm/drawingarea.h>
+#include <QWidget>
 #include <memory>
 #include "camera.hpp"
 #include "model.hpp"
@@ -9,27 +9,33 @@
 
 namespace linjal {
 
-class drawing_area : public Gtk::DrawingArea
+class drawing_area : public QWidget
 {
+    Q_OBJECT
+
 public:
     drawing_area(model &model);
+    shape* selected_shape();
+    void set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image);
+    Cairo::RefPtr<Cairo::ImageSurface> draw_to_image_surface();
+
+public Q_SLOTS:
     void new_shape();
     void use_pen_tool();
     void use_select_tool();
     void delete_selection();
-    shape* selected_shape();
-    void set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image);
     void set_image_visible(bool visible);
     void move_shape_up();
     void move_shape_down();
-    Cairo::RefPtr<Cairo::ImageSurface> draw_to_image_surface();
 
 private:
+#if 0
     bool on_draw(Cairo::RefPtr<Cairo::Context> const& cairo) override;
     bool on_button_press_event(GdkEventButton* event) override;
     bool on_button_release_event(GdkEventButton* event) override;
     bool on_motion_notify_event(GdkEventMotion* event) override;
     bool on_scroll_event(GdkEventScroll* event) override;
+#endif
     void on_shape_deleted(shape* shape);
     void draw_image(Cairo::RefPtr<Cairo::Context> const& cairo) const;
 

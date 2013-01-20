@@ -13,16 +13,21 @@ include_directories(${SIGC_INCLUDE_DIRS})
 include_directories(${QT_DEFINITIONS})
 
 qt4_wrap_cpp(MOC_SOURCES
+    drawing_area.hpp
     main_window.hpp)
 
 add_executable(linjal
     camera.cpp
+    drawing_area.cpp
     json.cpp
     main.cpp
     main_window.cpp
     model.cpp
+    pen_tool.cpp
     point_ref.cpp
+    select_tool.cpp
     shape.cpp
+    tool.cpp
     utils.cpp
     ${MOC_SOURCES})
 
