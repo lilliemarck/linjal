@@ -1,5 +1,4 @@
-#ifndef LINJAL_COLOR_CELL_RENDERER_HPP
-#define LINJAL_COLOR_CELL_RENDERER_HPP
+#pragma once
 
 #include <glibmm/property.h>
 #include <gtkmm/cellrenderer.h>
@@ -24,5 +23,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_COLOR_CELL_RENDERER_HPP

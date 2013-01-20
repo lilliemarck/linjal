@@ -1,5 +1,4 @@
-#ifndef LINJAL_CAMERA_HPP
-#define LINJAL_CAMERA_HPP
+#pragma once
 
 #include <math/vector.hpp>
 
@@ -26,5 +25,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_CAMERA_HPP

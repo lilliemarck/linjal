@@ -1,5 +1,4 @@
-#ifndef LINJAL_MAIN_WINDOW_HPP
-#define LINJAL_MAIN_WINDOW_HPP
+#pragma once
 
 #include <gtkmm/uimanager.h>
 #include <gtkmm/box.h>
@@ -42,5 +41,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_MAIN_WINDOW_HPP

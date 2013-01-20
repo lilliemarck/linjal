@@ -1,5 +1,4 @@
-#ifndef LINJAL_DRAWING_AREA_HPP
-#define LINJAL_DRAWING_AREA_HPP
+#pragma once
 
 #include <gtkmm/drawingarea.h>
 #include <memory>
@@ -49,5 +48,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_DRAWING_AREA_HPP

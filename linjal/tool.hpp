@@ -1,5 +1,4 @@
-#ifndef LINJAL_TOOL_HPP
-#define LINJAL_TOOL_HPP
+#pragma once
 
 #include <math/vector.hpp>
 #include <gdkmm.h>
@@ -33,5 +32,3 @@ protected:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_TOOL_HPP

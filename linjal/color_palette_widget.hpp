@@ -1,5 +1,4 @@
-#ifndef LINJAL_COLOR_PALETTE_WIDGET_HPP
-#define LINJAL_COLOR_PALETTE_WIDGET_HPP
+#pragma once
 
 #include <gtkmm/box.h>
 #include <gtkmm/scrolledwindow.h>
@@ -47,5 +46,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_COLOR_PALETTE_WIDGET_HPP

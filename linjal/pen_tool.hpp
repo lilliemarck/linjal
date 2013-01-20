@@ -1,5 +1,4 @@
-#ifndef LINJAL_PEN_TOOL_HPP
-#define LINJAL_PEN_TOOL_HPP
+#pragma once
 
 #include <math/vector.hpp>
 #include <set>
@@ -33,5 +32,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_PEN_TOOL_HPP

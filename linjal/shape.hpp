@@ -1,5 +1,4 @@
-#ifndef LINJAL_SHAPE_HPP
-#define LINJAL_SHAPE_HPP
+#pragma once
 
 #include <cairomm/cairomm.h>
 #include <math/vector.hpp>
@@ -36,5 +35,3 @@ point_ref nearest_point(path& path, math::vector2f const& point, float& distance
 void path_curve(path const& path, Cairo::RefPtr<Cairo::Context> const& cairo, camera const& camera);
 
 } // namespace linjal
-
-#endif // LINJAL_SHAPE_HPP

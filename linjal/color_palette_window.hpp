@@ -1,5 +1,4 @@
-#ifndef LINJAL_COLOR_PALETTE_WINDOW_HPP
-#define LINJAL_COLOR_PALETTE_WINDOW_HPP
+#pragma once
 
 #include <gtkmm/window.h>
 #include "color_palette_widget.hpp"
@@ -22,5 +21,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_COLOR_PALETTE_WINDOW_HPP

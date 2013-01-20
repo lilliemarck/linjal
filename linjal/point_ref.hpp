@@ -1,5 +1,4 @@
-#ifndef LINJAL_POINT_REF_HPP
-#define LINJAL_POINT_REF_HPP
+#pragma once
 
 #include <math/vector.hpp>
 
@@ -32,5 +31,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_POINT_REF_HPP

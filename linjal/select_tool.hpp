@@ -1,5 +1,4 @@
-#ifndef LINJAL_SELECT_TOOL_HPP
-#define LINJAL_SELECT_TOOL_HPP
+#pragma once
 
 #include "tool.hpp"
 
@@ -19,5 +18,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_SELECT_TOOL_HPP

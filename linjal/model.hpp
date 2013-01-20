@@ -1,5 +1,4 @@
-#ifndef LINJAL_MODEL_HPP
-#define LINJAL_MODEL_HPP
+#pragma once
 
 #include <linjal/json.hpp>
 #include <sigc++/signal.h>
@@ -64,5 +63,3 @@ struct json_converter<model>
 };
 
 } // namespace linjal
-
-#endif // LINJAL_MODEL_HPP

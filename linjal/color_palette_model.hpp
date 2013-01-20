@@ -1,5 +1,4 @@
-#ifndef LINJAL_COLOR_PALETTE_MODEL_HPP
-#define LINJAL_COLOR_PALETTE_MODEL_HPP
+#pragma once
 
 #include <gtkmm.h>
 #include "model.hpp"
@@ -51,5 +50,3 @@ private:
 };
 
 } // namespace linjal
-
-#endif // LINJAL_COLOR_PALETTE_MODEL_HPP
