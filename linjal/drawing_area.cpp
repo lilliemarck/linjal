@@ -1,4 +1,5 @@
 #include "drawing_area.hpp"
+#include <QMouseEvent>
 #include <QPainter>
 #include "drawing_context.hpp"
 #include "pen_tool.hpp"
@@ -12,6 +13,7 @@ drawing_area::drawing_area(model& model)
     , panning_(false)
     , image_visible_(true)
 {
+    setMouseTracking(true);
     use_pen_tool();
     model_.signal_shape_deleted().connect(sigc::mem_fun(this, &drawing_area::on_shape_deleted));
     model_.signal_color_changed().connect(sigc::mem_fun(this, static_cast<void(QWidget::*)()>(&QWidget::update)));
@@ -115,17 +117,15 @@ void drawing_area::paintEvent(QPaintEvent* event)
     tool_->on_draw(context);
 }
 
-#if 0
-
-bool drawing_area::on_button_press_event(GdkEventButton* event)
+void drawing_area::mousePressEvent(QMouseEvent* event)
 {
     pointer_event pointer_event =
     {
-        camera_.to_model_space({float(event->x), float(event->y)}),
-        event->state
+        camera_.to_model_space({float(event->x()), float(event->y())}),
+        event->modifiers()
     };
 
-    if (event->button == 3)
+    if (event->button() == Qt::RightButton)
     {
         panning_ = true;
         grab_position_ = pointer_event.model_position;
@@ -135,32 +135,30 @@ bool drawing_area::on_button_press_event(GdkEventButton* event)
         tool_->on_button_press_event(pointer_event);
     }
 
-    queue_draw();
-    return true;
+    update();
 }
 
-bool drawing_area::on_button_release_event(GdkEventButton* event)
+void drawing_area::mouseReleaseEvent(QMouseEvent* event)
 {
-    if (event->button == 3)
+    if (event->button() == Qt::RightButton)
     {
         panning_ = false;
-        return true;
+        return;
     }
 
     pointer_event pointer_event =
     {
-        camera_.to_model_space({float(event->x), float(event->y)}),
-        event->state
+        camera_.to_model_space({float(event->x()), float(event->y())}),
+        event->modifiers()
     };
 
     tool_->on_button_release_event(pointer_event);
-    queue_draw();
-    return true;
+    update();
 }
 
-bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
+void drawing_area::mouseMoveEvent(QMouseEvent* event)
 {
-    math::vector2f event_position = {float(event->x), float(event->y)};
+    math::vector2f event_position = {float(event->x()), float(event->y())};
 
     if (panning_)
     {
@@ -172,15 +170,16 @@ bool drawing_area::on_motion_notify_event(GdkEventMotion* event)
         pointer_event pointer_event =
         {
             camera_.to_model_space(event_position),
-            event->state
+            event->modifiers()
         };
 
         tool_->on_motion_notify_event(pointer_event);
     }
 
-    queue_draw();
-    return true;
+    update();
 }
+
+#if 0
 
 bool drawing_area::on_scroll_event(GdkEventScroll* event)
 {

@@ -31,10 +31,10 @@ public Q_SLOTS:
 
 private:
     void paintEvent(QPaintEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
 #if 0
-    bool on_button_press_event(GdkEventButton* event) override;
-    bool on_button_release_event(GdkEventButton* event) override;
-    bool on_motion_notify_event(GdkEventMotion* event) override;
     bool on_scroll_event(GdkEventScroll* event) override;
 #endif
     void on_shape_deleted(shape* shape);
