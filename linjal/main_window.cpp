@@ -3,6 +3,7 @@
 #include <json_spirit_writer.h>
 #include <fstream>
 #include <QAction>
+#include <QFileDialog>
 #include <QMenu>
 #include <QMenuBar>
 #include <QToolBar>
@@ -11,16 +12,6 @@ namespace linjal {
 
 namespace
 {
-#if 0
-    Glib::RefPtr<Gtk::FileFilter> make_linjal_file_filter()
-    {
-        auto filter = Gtk::FileFilter::create();
-        filter->set_name("Linjal document");
-        filter->add_pattern("*.linjal");
-        return filter;
-    }
-#endif
-
     void create_default_colors(model &model)
     {
         std::size_t colod_index = model.new_color();
@@ -64,7 +55,7 @@ void main_window::create_actions()
 
     save_as_action_ = new QAction(tr("Save &As..."), this);
     save_as_action_->setShortcuts(QKeySequence::SaveAs);
-    connect(open_action_, SIGNAL(triggered()), this, SLOT(save_as()));
+    connect(save_as_action_, SIGNAL(triggered()), this, SLOT(save_as()));
 
     open_image_action_ = new QAction(tr("Open Image..."), this);
     connect(open_image_action_, SIGNAL(triggered()), this, SLOT(show_select_image_dialog()));
@@ -182,17 +173,13 @@ void main_window::on_color_index_changed(size_t color_index)
 
 void main_window::open()
 {
-#if 0
-    Gtk::FileChooserDialog dialog("Open Linjal Document...");
-    dialog.add_filter(make_linjal_file_filter());
-    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_ACCEPT);
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Linjal Document..."), QString(), tr("Document (*.linjal)"));
 
-    if (dialog.run() == Gtk::RESPONSE_ACCEPT)
+    if (!filename.isEmpty())
     {
         try
         {
-            std::ifstream file(dialog.get_filename());
+            std::ifstream file(filename.toStdString());
             json_spirit::Value value;
             read(file, value);
             model_ = from_json<model>(value);
@@ -201,25 +188,18 @@ void main_window::open()
         {
         }
     }
-#endif
 }
 
 void main_window::save_as()
 {
-#if 0
-    Gtk::FileChooserDialog dialog("Save As...");
-    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
-    dialog.add_filter(make_linjal_file_filter());
-    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::Stock::SAVE_AS, Gtk::RESPONSE_ACCEPT);
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save Document As..."), QString(), tr("Document (*.linjal)"));
 
-    if (dialog.run() == Gtk::RESPONSE_ACCEPT)
+    if (!filename.isEmpty())
     {
         json_spirit::Value value = to_json(model_);
-        std::ofstream file(dialog.get_filename());
+        std::ofstream file(filename.toStdString());
         write(value, file, json_spirit::remove_trailing_zeros);
     }
-#endif
 }
 
 void main_window::show_select_image_dialog()
