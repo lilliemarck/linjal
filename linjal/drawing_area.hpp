@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cairomm/cairomm.h>
 #include <QWidget>
 #include <memory>
 #include "camera.hpp"
@@ -17,7 +16,7 @@ class drawing_area : public QWidget
 public:
     drawing_area(model &model);
     shape* selected_shape();
-    void set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image);
+    void set_image(QImage const& image);
     QImage draw_to_image();
 
 public Q_SLOTS:
@@ -36,7 +35,7 @@ private:
     void mouseMoveEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
     void on_shape_deleted(shape* shape);
-    void draw_image(Cairo::RefPtr<Cairo::Context> const& cairo) const;
+    void draw_image(QPainter& painter) const;
 
     model& model_;
     shape* shape_;
@@ -44,7 +43,7 @@ private:
     std::unique_ptr<tool> tool_;
     bool panning_;
     math::vector2f grab_position_;
-    Cairo::RefPtr<Cairo::SurfacePattern> image_pattern_;
+    QImage image_;
     bool image_visible_;
 
     friend class tool;

@@ -50,10 +50,9 @@ shape* drawing_area::selected_shape()
     return shape_;
 }
 
-void drawing_area::set_image(Cairo::RefPtr<Cairo::ImageSurface> const& image)
+void drawing_area::set_image(QImage const& image)
 {
-    image_pattern_ = Cairo::SurfacePattern::create(image);
-    image_pattern_->set_filter(Cairo::FILTER_NEAREST);
+    image_ = image;
 }
 
 void drawing_area::set_image_visible(bool visible)
@@ -105,15 +104,13 @@ void drawing_area::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    drawing_context context(painter);
 
-#if 0
-    if (image_pattern_ && image_visible_)
+    if (!image_.isNull() && image_visible_)
     {
-        draw_image(cairo);
+        draw_image(painter);
     }
-#endif
 
+    drawing_context context(painter);
     model_.draw(context, camera_);
     tool_->on_draw(context);
 }
@@ -208,17 +205,13 @@ void drawing_area::on_shape_deleted(shape* shape)
     }
 }
 
-void drawing_area::draw_image(Cairo::RefPtr<Cairo::Context> const& cairo) const
+void drawing_area::draw_image(QPainter& painter) const
 {
-    auto position = camera_.get_position();
-    auto inv_zoom = 1.0 / camera_.get_zoom();
+    auto position = camera_.to_screen_space({0.0f, 0.0f});
+    auto size     = camera_.to_screen_scale({float(image_.width()), float(image_.height())});
 
-    image_pattern_->set_matrix(Cairo::Matrix(inv_zoom, 0.0,
-                                             0.0, inv_zoom,
-                                             position.x(), position.y()));
-
-    cairo->set_source(image_pattern_);
-    cairo->paint();
+    QRect rect(position.x(), position.y(), size.x(), size.y());
+    painter.drawImage(rect, image_);
 }
 
 } // namespace linjal

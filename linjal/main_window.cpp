@@ -204,23 +204,17 @@ void main_window::save_as()
 
 void main_window::show_select_image_dialog()
 {
-#if 0
-    Gtk::FileChooserDialog dialog("Open File...");
-    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_ACCEPT);
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Image..."), QString(), tr("PNG Image (*.png)"));
 
-    if (dialog.run() == Gtk::RESPONSE_ACCEPT)
+    if (!filename.isEmpty())
     {
-        try
+        QImage image(filename);
+
+        if (!image.isNull())
         {
-            auto image = Cairo::ImageSurface::create_from_png(dialog.get_filename());
             drawing_area_.set_image(image);
         }
-        catch (...)
-        {
-        }
     }
-#endif
 }
 
 void main_window::show_export_dialog()
