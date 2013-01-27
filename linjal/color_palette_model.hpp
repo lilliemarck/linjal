@@ -1,50 +1,34 @@
 #pragma once
 
-#include <gtkmm.h>
+#include <QAbstractListModel>
 #include "model.hpp"
 
 namespace linjal {
 
-struct color_palette_columns : public Gtk::TreeModel::ColumnRecord
-{
-    color_palette_columns() { add(index), add(name); add(color); }
-
-    Gtk::TreeModelColumn<size_t> index;
-    Gtk::TreeModelColumn<std::string> name;
-    Gtk::TreeModelColumn<linjal::color> color;
-};
-
-class color_palette_model : public Glib::Object, public Gtk::TreeModel
+class color_palette_model : public QAbstractListModel
 {
 public:
-    static Glib::RefPtr<color_palette_model> create(model& model);
-    static color_palette_columns const& columns();
+    enum columns
+    {
+        index_column,
+        name_column,
+        color_column,
+        columns_
+    };
 
-    size_t get_index(Gtk::TreeModel::iterator const& iter);
-    size_t get_index(Path const& path);
-
-private:
     color_palette_model(model& model);
 
-    Gtk::TreeModelFlags get_flags_vfunc() const override;
-    int get_n_columns_vfunc() const override;
-    GType get_column_type_vfunc(int index) const override;
-    bool iter_next_vfunc(iterator const& iter, iterator& iter_next) const override;
-    bool get_iter_vfunc(Path const& path, iterator& iter) const override;
-    bool iter_children_vfunc(iterator const& parent, iterator& iter) const override;
-    bool iter_parent_vfunc(iterator const& child, iterator& iter) const override;
-    bool iter_nth_child_vfunc(iterator const& parent, int n, iterator& iter) const override;
-    bool iter_nth_root_child_vfunc(int n, iterator& iter) const override;
-    bool iter_has_child_vfunc(iterator const& iter) const override;
-    int iter_n_children_vfunc(iterator const& iter) const override;
-    int iter_n_root_children_vfunc() const override;
-    void ref_node_vfunc(iterator const& iter) const override;
-    void unref_node_vfunc(iterator const& iter) const override;
-    Path get_path_vfunc(iterator const& iter) const override;
-    void get_value_vfunc(iterator const& iter, int column, Glib::ValueBase& value) const override;
+    int columnCount(QModelIndex const &parent) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    int rowCount(QModelIndex const &parent) const override;
+    Qt::ItemFlags flags(QModelIndex const& index) const override;
+    QVariant data(QModelIndex const &index, int role) const override;
+    bool setData(QModelIndex const& index, QVariant const& value, int role) override;
 
-    void on_color_inserted(size_t index);
-    void on_color_deleted(size_t index);
+private:
+    void on_color_inserted(std::size_t row);
+    void on_color_deleted(std::size_t row);
+    void on_color_changed(std::size_t row);
 
     model& model_;
 };

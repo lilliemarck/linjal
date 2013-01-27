@@ -11,10 +11,13 @@ include_directories(${SIGC_INCLUDE_DIRS})
 include_directories(${QT_DEFINITIONS})
 
 qt4_wrap_cpp(MOC_SOURCES
+    color_palette_widget.hpp
     drawing_area.hpp
     main_window.hpp)
 
 add_executable(linjal
+    color_palette_model.cpp
+    color_palette_widget.cpp
     camera.cpp
     drawing_area.cpp
     drawing_context.cpp
@@ -27,6 +30,7 @@ add_executable(linjal
     select_tool.cpp
     shape.cpp
     tool.cpp
+    utils.cpp
     ${MOC_SOURCES})
 
 target_link_libraries(linjal json_spirit ${SIGC_LIBRARIES} ${QT_LIBRARIES})

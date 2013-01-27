@@ -16,7 +16,7 @@ drawing_area::drawing_area(model& model)
     setMouseTracking(true);
     use_pen_tool();
     model_.signal_shape_deleted().connect(sigc::mem_fun(this, &drawing_area::on_shape_deleted));
-    model_.signal_color_changed().connect(sigc::mem_fun(this, static_cast<void(QWidget::*)()>(&QWidget::update)));
+    model_.signal_color_changed().connect(sigc::mem_fun(this, &drawing_area::on_color_changed));
 }
 
 void drawing_area::new_shape()
@@ -203,6 +203,11 @@ void drawing_area::on_shape_deleted(shape* shape)
     {
         shape_ = nullptr;
     }
+}
+
+void drawing_area::on_color_changed(std::size_t row)
+{
+    update();
 }
 
 void drawing_area::draw_image(QPainter& painter) const

@@ -1,12 +1,13 @@
 #pragma once
 
+#include <memory>
 #include <QMainWindow>
 #include "drawing_area.hpp"
 #include "model.hpp"
 
 namespace linjal {
 
-class color_palette_window;
+class color_palette_widget;
 
 class main_window : public QMainWindow
 {
@@ -52,10 +53,11 @@ private:
     QMenu* edit_menu_;
     QToolBar* toolbar_;
 
+    std::unique_ptr<color_palette_widget> color_palette_window_;
+
 #if 0
     Gtk::VBox vbox_;
 
-    std::unique_ptr<color_palette_window> color_palette_window_;
     std::unique_ptr<color_palette_window> color_palette_dialog_;
 #endif
 };

@@ -34,7 +34,7 @@ public:
     sigc::signal<void,shape*>& signal_shape_deleted();
     sigc::signal<void,size_t>& signal_color_inserted();
     sigc::signal<void,size_t>& signal_color_deleted();
-    sigc::signal<void>& signal_color_changed();
+    sigc::signal<void,std::size_t>& signal_color_changed();
 
 private:
     struct named_color
@@ -48,7 +48,7 @@ private:
     sigc::signal<void,shape*> shape_deleted_;
     sigc::signal<void,size_t> color_inserted_;
     sigc::signal<void,size_t> color_deleted_;
-    sigc::signal<void> color_changed_;
+    sigc::signal<void,std::size_t> color_changed_;
 };
 
 template <>

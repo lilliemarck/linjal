@@ -35,6 +35,7 @@ private:
     void mouseMoveEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
     void on_shape_deleted(shape* shape);
+    void on_color_changed(std::size_t row);
     void draw_image(QPainter& painter) const;
 
     model& model_;

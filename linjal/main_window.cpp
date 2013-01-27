@@ -7,6 +7,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QToolBar>
+#include "color_palette_widget.hpp"
 
 namespace linjal {
 
@@ -132,14 +133,12 @@ void main_window::create_toolbar()
 
 void main_window::show_palette()
 {
-#if 0
     if (!color_palette_window_)
     {
-        color_palette_window_ = std::unique_ptr<color_palette_window>(new color_palette_window(model_));
+        color_palette_window_.reset(new color_palette_widget(model_));
     }
 
-    color_palette_window_->present();
-#endif
+    color_palette_window_->show();
 }
 
 void main_window::show_color_chooser()

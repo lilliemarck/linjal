@@ -151,7 +151,7 @@ std::string model::get_color_name(size_t index) const
 void model::set_color_name(size_t index, std::string const& name)
 {
     colors_[index].name = name;
-    color_changed_();
+    color_changed_(index);
 }
 
 color model::get_color(size_t index) const
@@ -162,7 +162,7 @@ color model::get_color(size_t index) const
 void model::set_color(size_t index, color const& color)
 {
     colors_[index].color = color;
-    color_changed_();
+    color_changed_(index);
 }
 
 sigc::signal<void,shape*>& model::signal_shape_deleted()
@@ -180,7 +180,7 @@ sigc::signal<void,size_t>& model::signal_color_deleted()
     return color_deleted_;
 }
 
-sigc::signal<void>& model::signal_color_changed()
+sigc::signal<void,std::size_t>& model::signal_color_changed()
 {
     return color_changed_;
 }
