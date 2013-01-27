@@ -24,12 +24,12 @@ private Q_SLOTS:
     void save_as();
     void show_select_image_dialog();
     void show_export_dialog();
+    void on_color_index_changed(std::size_t color_index);
 
 private:
     void create_actions();
     void create_menus();
     void create_toolbar();
-    void on_color_index_changed(size_t color_index);
 
     model model_;
     drawing_area drawing_area_;
@@ -54,12 +54,7 @@ private:
     QToolBar* toolbar_;
 
     std::unique_ptr<color_palette_widget> color_palette_window_;
-
-#if 0
-    Gtk::VBox vbox_;
-
-    std::unique_ptr<color_palette_window> color_palette_dialog_;
-#endif
+    std::unique_ptr<color_palette_widget> color_palette_dialog_;
 };
 
 } // namespace linjal

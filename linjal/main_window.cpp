@@ -36,12 +36,6 @@ main_window::main_window() : drawing_area_(model_)
     create_actions();
     create_menus();
     create_toolbar();
-
-#if 0
-    add(vbox_);
-    vbox_.pack_start(drawing_area_);
-    show_all_children();
-#endif
 }
 
 main_window::~main_window()
@@ -143,19 +137,22 @@ void main_window::show_palette()
 
 void main_window::show_color_chooser()
 {
-#if 0
-    if (!color_palette_dialog_)
+    shape *shape = drawing_area_.selected_shape();
+
+    if (!shape)
     {
-        color_palette_dialog_ = std::unique_ptr<color_palette_window>(new color_palette_window(model_));
-        color_palette_dialog_->set_title("Select Color");
-        color_palette_dialog_->get_color_palette_widget().signal_color_index_changed().connect(sigc::mem_fun(this, &main_window::on_color_index_changed));
+        return;
     }
 
-    color_palette_dialog_->present();
-#endif
-}
+    if (!color_palette_dialog_)
+    {
+        color_palette_dialog_.reset(new color_palette_widget(model_));
+        connect(color_palette_dialog_.get(), SIGNAL(color_index_changed(std::size_t)), this, SLOT(on_color_index_changed(std::size_t)));
+    }
 
-#if 0
+    color_palette_dialog_->set_color_index(shape->color_index);
+    color_palette_dialog_->show();
+}
 
 void main_window::on_color_index_changed(size_t color_index)
 {
@@ -164,11 +161,9 @@ void main_window::on_color_index_changed(size_t color_index)
     if (shape && color_index < model_.color_count())
     {
         shape->color_index = color_index;
-        drawing_area_.queue_draw();
+        drawing_area_.update();
     }
 }
-
-#endif
 
 void main_window::open()
 {

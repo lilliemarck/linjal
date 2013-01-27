@@ -20,6 +20,7 @@ color_palette_widget::color_palette_widget(model& model) :
     connect(&add_button_, SIGNAL(clicked()), this, SLOT(on_add_color()));
     connect(&remove_button_, SIGNAL(clicked()), this, SLOT(on_remove_color()));
     connect(&tree_view_, SIGNAL(activated(const QModelIndex&)), this, SLOT(on_item_activated(const QModelIndex&)));
+    connect(tree_view_.selectionModel(), SIGNAL(currentChanged(QModelIndex const&, QModelIndex const&)), this, SLOT(on_current_changed(QModelIndex const&, QModelIndex const&)));
     connect(&color_dialog_, SIGNAL(currentColorChanged(QColor const&)), this, SLOT(on_color_changed(QColor const&)));
     connect(&color_dialog_, SIGNAL(rejected()), this, SLOT(on_color_rejected()));
 
@@ -31,6 +32,11 @@ color_palette_widget::color_palette_widget(model& model) :
 
     color_dialog_.setModal(true);
     color_dialog_.setOptions(QColorDialog::ShowAlphaChannel);
+}
+
+void color_palette_widget::set_color_index(std::size_t index)
+{
+    tree_view_.setCurrentIndex(color_palette_model_.index(index));
 }
 
 void color_palette_widget::on_add_color()
@@ -62,6 +68,11 @@ void color_palette_widget::on_item_activated(QModelIndex const& index)
         color_dialog_.setCurrentColor(to_qcolor(original_color_));
         color_dialog_.show();
     }
+}
+
+void color_palette_widget::on_current_changed(QModelIndex const& current, QModelIndex const& previous)
+{
+    color_index_changed(current.row());
 }
 
 void color_palette_widget::on_color_changed(QColor const& color)
